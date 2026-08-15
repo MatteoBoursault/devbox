@@ -34,8 +34,7 @@ Créer une devbox (clone le dépôt dans le home) :
 distrobox create --name devbox \
   --image devbox --yes \
   --home ~/.local/share/devbox-home \
-  --init-hooks "git config --global --add safe.directory ~ && \
-    cd ~ && \
+  --init-hooks "runuser -u \$(stat -c %u \$HOME) -- sh -c 'cd ~ && \
     git init && \
     git remote add origin https://github.com/MatteoBoursault/devbox.git && \
     git fetch && \
@@ -43,7 +42,7 @@ distrobox create --name devbox \
     mkdir -p ~/.ssh && \
     ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa ~/.ssh/id_rsa && \
     ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa.pub ~/.ssh/id_rsa.pub && \
-    ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts ~/.ssh/known_hosts"
+    ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts ~/.ssh/known_hosts'"
 ```
 
 Entrer dans la devbox (lance kitty) :
