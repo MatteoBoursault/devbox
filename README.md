@@ -69,7 +69,7 @@ La devbox contient les outils suivants, configurés pour fonctionner ensemble :
 - yazi (gestionnaire de fichiers)
 - nvim (IDE)
 - omp (harnais LLM)
-- bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs... (outils CLI)
+- bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs, grex, trash-cli... (outils CLI)
 
 ## Roadmap
 Version actuelle : 0.0
@@ -81,8 +81,6 @@ La devbox se voulant évolutive, les configurations des outils de cette version 
 
 TODO :
 - ajouter et configurer
-    - fish
-        - ajouter bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs
     - starship
     - herdr
     - yazi
