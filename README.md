@@ -1,6 +1,6 @@
 # devbox
 L'objectif de ce projet est de fournir un environnement de développement conteneurisé, reproductible et facilement déployable.
-Les parties conteneurisation et déploiement sont gérées par **podman** et **distrobox** (Arch Linux) tandis que la reproductibilité est assurée par un **Containerfile** qui construit une image contenant tous les outils.
+Les parties conteneurisation et déploiement sont gérées par **podman** et **distrobox** (Arch Linux) : le **Containerfile** construit l'image des outils, le dépôt (cloné dans le home) versionne les configurations.
 
 Cet environnement de dev est pensé pour fonctionner uniquement dans le terminal et les raccourcis clavier sont adaptés à la disposition de clavier **Dvorak for programmer**.
 
@@ -16,7 +16,7 @@ sudo pacman -S podman distrobox
 
 ### Construire l'image
 
-L'image contient l'ensemble des outils, installés par le [Containerfile](Containerfile) :
+L'image contient les outils ; les configurations arrivent via le dépôt cloné à la création.
 ```bash
 podman build -t devbox .
 ```
@@ -29,22 +29,25 @@ distrobox rm -f devbox
 sudo rm -rf ~/.local/share/devbox-home
 ```
 
-Créer une devbox :
+Créer une devbox (clone le dépôt dans le home) :
 ```bash
-SHELL=/bin/bash distrobox create --name devbox \
+distrobox create --name devbox \
   --image devbox --yes \
   --home ~/.local/share/devbox-home \
-  --init-hooks "chsh -s /usr/bin/fish && \
-    git config --global --add safe.directory ~ && \
+  --init-hooks "git config --global --add safe.directory ~ && \
     cd ~ && \
     git init && \
     git remote add origin https://github.com/MatteoBoursault/devbox.git && \
     git fetch && \
-    git checkout main && \
-    just update"
+    git checkout main"
 ```
 
-Entrer dans la devbox :
+Entrer dans la devbox (lance kitty) :
+```bash
+distrobox enter devbox -- kitty
+```
+
+Pour un shell simple (dépannage) :
 ```bash
 distrobox enter devbox
 ```
@@ -78,7 +81,6 @@ La devbox se voulant évolutive, les configurations des outils de cette version 
 
 TODO :
 - ajouter et configurer
-    - kitty
     - fish
         - ajouter bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs
     - starship
