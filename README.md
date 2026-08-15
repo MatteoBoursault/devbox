@@ -39,17 +39,21 @@ distrobox create --name devbox \
     git init && \
     git remote add origin https://github.com/MatteoBoursault/devbox.git && \
     git fetch && \
-    git checkout main"
+    git checkout main && \
+    mkdir -p ~/.ssh && \
+    ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa ~/.ssh/id_rsa && \
+    ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa.pub ~/.ssh/id_rsa.pub && \
+    ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts ~/.ssh/known_hosts"
 ```
 
 Entrer dans la devbox (lance kitty) :
 ```bash
-distrobox enter devbox -- kitty
+distrobox enter --no-workdir devbox -- kitty
 ```
 
 Pour un shell simple (dépannage) :
 ```bash
-distrobox enter devbox
+distrobox enter --no-workdir devbox
 ```
 
 ## Commandes utiles
@@ -71,6 +75,16 @@ La devbox contient les outils suivants, configurés pour fonctionner ensemble :
 - omp (harnais LLM)
 - bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs, grex, trash-cli... (outils CLI)
 
+## Langages
+
+La devbox gère les langages suivants :
+- TypeScript / JavaScript (bun)
+- Rust
+- Python
+- C++
+- C
+- Lua
+
 ## Roadmap
 Version actuelle : 0.0
 
@@ -81,7 +95,6 @@ La devbox se voulant évolutive, les configurations des outils de cette version 
 
 TODO :
 - ajouter et configurer
-    - starship
     - herdr
     - yazi
     - nvim

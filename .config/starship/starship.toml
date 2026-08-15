@@ -1,0 +1,99 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$docker_context\
+$bun\
+$rust\
+$python\
+$cpp\
+$c\
+$lua\
+$cmd_duration\
+$status\
+$character"""
+
+add_newline = true
+
+[directory]
+format = "[$path]($style) "
+style = "cyan"
+truncate_to_repo = true
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+style = "purple"
+
+[git_status]
+format = '([\[$all_status$ahead_behind\]]($style) )'
+style = "purple"
+ahead = "[⇡](yellow)"
+behind = "[⇣](yellow)"
+diverged = "[⇕](yellow)"
+conflicted = "[=](red)"
+untracked = "[?](cyan)"
+modified = "[!](yellow)"
+staged = "[+](green)"
+deleted = "[](red)"
+renamed = "[»](green)"
+
+[docker_context]
+format = "[$symbol$context]($style) "
+symbol = " "
+style = "blue"
+only_with_files = false
+
+[bun]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+
+[rust]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+
+[python]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+
+[cpp]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+disabled = false
+
+[c]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+
+[lua]
+format = "[$symbol($version )]($style)"
+version_format = "${raw}"
+symbol = " "
+style = "green"
+
+[cmd_duration]
+format = "took [$duration]($style) "
+style = "yellow"
+
+[status]
+format = "[$symbol $status]($style) "
+symbol = ""
+style = "red"
+disabled = false
+
+[character]
+format = "$symbol "
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
+vimcmd_symbol = "[❮](bold green)"
