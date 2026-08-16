@@ -1,0 +1,10 @@
+.devbox-initialized
+
+.config/fish/fish_variables
+.config/fish/fish_history
+
+.local/
+.cache/
+.ssh/
+
+.config/yazi/plugins/faster-piper.yazi/

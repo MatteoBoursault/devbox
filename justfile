@@ -3,6 +3,6 @@ update:
     paru -Syu --noconfirm
     herdr update
     bun update -g omp
-    ya pack -u
+    ya pkg upgrade
     # nvim --headless "+PackUpdate" +qa
     @echo "✓ Mise à jour terminée"

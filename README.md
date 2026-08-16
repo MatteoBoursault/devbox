@@ -97,7 +97,6 @@ La devbox se voulant évolutive, les configurations des outils de cette version 
 
 TODO :
 - ajouter et configurer
-    - yazi
     - nvim
         - trouver une distribution complète et l'adapter
     - omp

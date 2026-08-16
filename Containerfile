@@ -24,7 +24,7 @@ RUN git clone https://aur.archlinux.org/paru.git && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru
-RUN paru -S --noconfirm bun ttf-hack-nerd grex
+RUN paru -S --noconfirm bun ttf-hack-nerd grex nvimpager
 
 USER root
 RUN pacman -S --noconfirm --needed \
