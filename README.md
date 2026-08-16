@@ -48,9 +48,9 @@ distrobox create --name devbox \
   fi"
 ```
 
-Entrer dans la devbox (lance kitty) :
+Entrer dans la devbox (lance herdr) :
 ```bash
-distrobox enter --no-workdir devbox -- kitty
+distrobox enter --no-workdir devbox -- kitty herdr
 ```
 
 Pour un shell simple (dépannage) :
@@ -97,7 +97,6 @@ La devbox se voulant évolutive, les configurations des outils de cette version 
 
 TODO :
 - ajouter et configurer
-    - herdr
     - yazi
     - nvim
         - trouver une distribution complète et l'adapter
