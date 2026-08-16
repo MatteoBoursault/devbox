@@ -34,15 +34,18 @@ Créer une devbox (clone le dépôt dans le home) :
 distrobox create --name devbox \
   --image devbox --yes \
   --home ~/.local/share/devbox-home \
-  --init-hooks "runuser -u \$(stat -c %u \$HOME) -- sh -c 'cd ~ && \
-    git init && \
-    git remote add origin https://github.com/MatteoBoursault/devbox.git && \
-    git fetch && \
-    git checkout main && \
-    mkdir -p ~/.ssh && \
-    ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa ~/.ssh/id_rsa && \
-    ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa.pub ~/.ssh/id_rsa.pub && \
-    ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts ~/.ssh/known_hosts'"
+  --init-hooks "if [ ! -f \$HOME/.devbox-initialized ]; then \
+    runuser -u \$(stat -c %u \$HOME) -- sh -c \"cd \$HOME && \
+      git init && \
+      git remote add origin https://github.com/MatteoBoursault/devbox.git && \
+      git fetch && \
+      git checkout main && \
+      mkdir -p \$HOME/.ssh && \
+      ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa \$HOME/.ssh/id_rsa && \
+      ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa.pub \$HOME/.ssh/id_rsa.pub && \
+      ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts \$HOME/.ssh/known_hosts && \
+      touch \$HOME/.devbox-initialized\"; \
+  fi"
 ```
 
 Entrer dans la devbox (lance kitty) :
