@@ -2,7 +2,14 @@ FROM docker.io/archlinux:latest
 
 RUN pacman -Syu --noconfirm && \
     pacman -S --noconfirm --needed \
-        base-devel git curl wget sudo just
+        base-devel git curl wget sudo just rustup
+
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:/usr/lib/rustup/bin:$PATH
+RUN rustup default stable && \
+    rustup component add clippy rustfmt rust-analyzer rust-src && \
+    chmod -R a+rwX /usr/local/rustup /usr/local/cargo # a+rwX pour que le user runtime et le builder compilent sans sudo.
 
 # makepkg/paru refusent de tourner en root : on crée un user dédié au build des paquets AUR.
 #   -m       : crée son home /home/builder
@@ -12,10 +19,8 @@ RUN pacman -Syu --noconfirm && \
 #              (requis par paru pour installer les paquets construits)
 # useradd crée aussi son groupe primaire `builder` (gid 999) par défaut.
 RUN useradd -m -u 999 -G wheel builder && \
-    # wheel = sudo sans mot de passe (nécessaire à paru en non-interactif)
     echo '%wheel ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/wheel && \
-    # sudo exige un fichier sudoers non modifiable : root, mode 0440
-    chmod 0440 /etc/sudoers.d/wheel
+    chmod 0440 /etc/sudoers.d/wheel # sudo exige un fichier sudoers non modifiable : root, mode 0440
 
 USER builder
 WORKDIR /home/builder
@@ -32,6 +37,13 @@ RUN pacman -S --noconfirm --needed \
         bat eza zoxide skim ripgrep fd \
         bandwhich btop difftastic procs trash-cli \
         neovim
+RUN pacman -S --noconfirm --needed \
+        uv ruff mypy \
+        clang cppcheck \
+        stylua luacheck lua-language-server \
+        shellcheck shfmt \
+        biome taplo-cli yamllint markdownlint-cli
 
 RUN curl -fsSL https://herdr.dev/install.sh | sh
-RUN BUN_INSTALL=/usr/local bun install -g omp
+
+RUN BUN_INSTALL=/usr/local bun install -g omp typescript typescript-language-server

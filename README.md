@@ -86,6 +86,26 @@ La devbox gère les langages suivants :
 - C++
 - C
 - Lua
+- Shell
+- Json
+- Toml
+- Yaml
+- Markdown
+
+### Formatter / Linter / LSP
+
+| Langage / format | Formatter | Linter | LSP |
+|---|---|---|---|
+| TypeScript / JavaScript | biome | biome | typescript-language-server |
+| Rust | rustfmt | clippy | rust-analyzer |
+| Python | ruff | ruff (+ mypy pour le typage) | — |
+| C / C++ | clang-format | clang-tidy, cppcheck | clangd |
+| Lua | stylua | luacheck | lua-language-server |
+| Shell | shfmt | shellcheck | — |
+| JSON | biome | biome | — |
+| TOML | taplo | taplo | taplo |
+| YAML | — | yamllint | — |
+| Markdown | — | markdownlint-cli | — |
 
 ## Roadmap
 Version actuelle : 0.0
