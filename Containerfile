@@ -24,15 +24,14 @@ RUN git clone https://aur.archlinux.org/paru.git && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru
-
-RUN paru -S --noconfirm herdr bun ttf-hack-nerd grex
+RUN paru -S --noconfirm bun ttf-hack-nerd grex
 
 USER root
-
 RUN pacman -S --noconfirm --needed \
         fish starship kitty yazi \
         bat eza zoxide skim ripgrep fd \
         bandwhich btop difftastic procs trash-cli \
         neovim
 
+RUN curl -fsSL https://herdr.dev/install.sh | sh
 RUN BUN_INSTALL=/usr/local bun install -g omp
