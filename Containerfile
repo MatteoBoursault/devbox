@@ -9,6 +9,7 @@ ENV RUSTUP_HOME=/usr/local/rustup \
     PATH=/usr/local/cargo/bin:/usr/lib/rustup/bin:$PATH
 RUN rustup default stable && \
     rustup component add clippy rustfmt rust-analyzer rust-src && \
+    mkdir -p /usr/local/rustup /usr/local/cargo && \
     chmod -R a+rwX /usr/local/rustup /usr/local/cargo # a+rwX pour que le user runtime et le builder compilent sans sudo.
 
 # makepkg/paru refusent de tourner en root : on crée un user dédié au build des paquets AUR.
@@ -36,7 +37,7 @@ RUN pacman -S --noconfirm --needed \
         fish starship kitty yazi \
         bat eza zoxide skim ripgrep fd \
         bandwhich btop difftastic procs trash-cli \
-        neovim
+        neovim tree-sitter-cli
 RUN pacman -S --noconfirm --needed \
         uv ruff mypy \
         clang cppcheck \
