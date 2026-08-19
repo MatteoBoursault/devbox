@@ -219,7 +219,7 @@ local languages = {
 -- ============================================================
 do
 	vim.pack.add({
-		"https://github.com/folke/tokyonight.nvim",
+		"https://github.com/rebelot/kanagawa.nvim",
 		"https://github.com/nvim-mini/mini.nvim",
 		"https://github.com/ibhagwan/fzf-lua",
 		"https://github.com/neovim/nvim-lspconfig",
@@ -240,9 +240,8 @@ end
 -- SECTION 4 : THÈME & UI
 -- ============================================================
 do
-	---@diagnostic disable-next-line: missing-fields
-	require("tokyonight").setup({ styles = { comments = { italic = false } } })
-	vim.cmd.colorscheme("tokyonight-night")
+	require("kanagawa").setup({ commentStyle = { italic = false }, theme = "wave" })
+	vim.cmd.colorscheme("kanagawa-wave")
 
 	require("mini.comment").setup({})
 	require("mini.trailspace").setup({})
