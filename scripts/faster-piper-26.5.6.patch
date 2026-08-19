@@ -1,0 +1,107 @@
+--- a/main.lua
++++ b/main.lua
+@@ -199,15 +199,19 @@
+   return Url(tostring(base)), nil
+ end
+ 
+-local function lock_path_for(cache_path)
++-- Identify this Yazi instance. Used to keep the lock and the scratch
++-- files of two instances previewing the same file apart.
++local function instance_id()
+   local app_id = ya.id and ya.id("app") or nil
+-
+-  local str_id = "noid"
+   if app_id and app_id.value then
+-    str_id = tostring(app_id.value)
++    return tostring(app_id.value)
+   end
++  return "noid"
++end
++
++local function lock_path_for(cache_path)
+   -- faster-piper lock system
+-  return Url(string.format("%s_FP_%s.lock", tostring(cache_path), str_id))
++  return Url(string.format("%s_FP_%s.lock", tostring(cache_path), instance_id()))
+ end
+ 
+ local function lock_is_held(cache_path)
+@@ -273,8 +277,16 @@
+   return false
+ end
+ 
++-- Release a held lock, synchronously.
++--
++-- This deliberately avoids fs.remove(): that is an async Yazi API, and
++-- the release must also work from a to-be-closed handler, where the
++-- coroutine can no longer yield ("attempt to yield across a C-call
++-- boundary"). os.remove() is plain C and removes an empty directory on
++-- POSIX. On Windows it refuses directories, so an abandoned lock there
++-- still has to wait for LOCK_TTL_SEC; nothing else breaks.
+ local function release_lock(lock_path)
+-  fs.remove("dir_all", lock_path)
++  os.remove(tostring(lock_path))
+ end
+ 
+ ----------------------------------------------------------------------
+@@ -390,7 +402,9 @@
+   local final = tpl:gsub('"$1"', ya.quote(source_path))
+ 
+   local quoted_path = ya.quote(tostring(cache_path))
+-  local tmp_url = Url(tostring(cache_path) .. ".tmp")
++  -- Per-instance tmp: when the lock times out we generate anyway, and two
++  -- generators racing for the same preview must not share a scratch path.
++  local tmp_url = Url(string.format("%s_FP_%s.tmp", tostring(cache_path), instance_id()))
+   local tmp_path = ya.quote(tostring(tmp_url))
+ 
+   -- 3) Generate content into cache_path (temporary), then build header+content into tmp, then mv
+@@ -469,24 +483,38 @@
+     return cache_path
+   end
+ 
+-  -- Acquire lock
++  -- Acquire lock. It only deduplicates work: a generator that fails to
++  -- get it still produces a correct cache, because every generator
++  -- writes its own scratch files and publishes them with one rename.
+   local lock_path = lock_path_for(cache_path)
+-  local ok = acquire_lock(lock_path, TIME_OUT_LOCK)
+-  if not ok then
+-    return nil, "locked-timeout"
+-  end
++  local locked = acquire_lock(lock_path, TIME_OUT_LOCK)
+ 
+-  -- Re-check after acquiring (someone else may have generated it)
++  -- Hand the lock back on every exit path, including the one Yazi takes
++  -- when it abandons this peek.
++  --
++  -- Yazi drops the coroutine of a superseded peek at whatever await point
++  -- it has reached, so anything written after generate_cache() simply
++  -- never runs. A to-be-closed variable is closed even then, and is the
++  -- only hook we get. Without it a single abandoned peek wedges every
++  -- later peek of that file until LOCK_TTL_SEC expires; Yazi peeks twice
++  -- in quick succession on startup, which is enough to hit this on a
++  -- generator as cheap as `eza --tree`.
++  local _lock <close> = setmetatable({}, {
++    __close = function()
++      if locked then
++        release_lock(lock_path)
++      end
++    end,
++  })
++
++  -- Re-check: whoever held the lock may have generated it meanwhile.
++  -- This also covers the timed-out case, where we go on to generate
++  -- without the lock rather than reporting failure.
+   if cache_is_fresh(job, cache_path) then
+-    release_lock(lock_path)
+     return cache_path
+   end
+ 
+-  local gen_ok = generate_cache(job, cache_path)
+-
+-  release_lock(lock_path)
+-
+-  if not gen_ok then
++  if not generate_cache(job, cache_path) then
+     return nil, "generate-failed"
+   end
+ 

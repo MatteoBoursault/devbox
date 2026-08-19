@@ -1,7 +1,3 @@
-# TODO_devbox: faster-piper@latest exige yazi ≥ 26.8.15 (pas encore dans Arch),
-# incompatible avec le paquet yazi 26.5.6 installé. Épinglé à 8b794bf
-# (compatible). Le préfixe `=` fige la version : `ya pkg upgrade` ne tire pas le
-# dernier. À lever quand Arch aura yazi ≥ 26.8.15.
 [[plugin.deps]]
 use = "alberti42/faster-piper"
 rev = "=8b794bf"
