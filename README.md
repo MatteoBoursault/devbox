@@ -29,12 +29,13 @@ distrobox rm -f devbox
 sudo rm -rf ~/.local/share/devbox-home
 ```
 
-Créer une devbox (clone le dépôt dans le home) :
+Créer une devbox :
 ```bash
 distrobox create --name devbox \
   --image devbox --yes \
   --home ~/.local/share/devbox-home \
   --volume ~/.ssh:$HOME/.local/share/devbox-home/.ssh:ro \
+  --volume ~/.secrets:$HOME/.local/share/devbox-home/.secrets:ro \
   --init-hooks "if [ ! -f \$HOME/.devbox-initialized ]; then \
     runuser -u \$(stat -c %u \$HOME) -- sh -c \"cd \$HOME && \
       git init && \
