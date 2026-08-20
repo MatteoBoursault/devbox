@@ -5,7 +5,7 @@ name = "terminal"
 enabled = false
 
 [keys]
-resize_mode = "ctrl+r"
+resize_mode = "ctrl+shift+r"
 
 # PANES
 focus_pane_left  = "ctrl+h"

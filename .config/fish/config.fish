@@ -25,6 +25,11 @@ abbr -a netw 'bandwhich'
 abbr -a regex 'grex'
 abbr -a rm 'trash'
 
+# HISTORY
+source ~/.config/fish/functions/skim_key_bindings.fish
+bind -M default \cr skim-history-widget
+bind -M insert \cr skim-history-widget
+
 # TODO_devbox: herdr (officiel) ne sait lancer qu'un shell dans un nouvel onglet,
 # pas une commande directe (herdrdev/herdr#1695). L'opener yazi crée donc l'onglet
 # avec `--env HERDR_OPEN_FILE=<fichier>` et on l'ouvre ici, au démarrage du shell
