@@ -34,16 +34,13 @@ Créer une devbox (clone le dépôt dans le home) :
 distrobox create --name devbox \
   --image devbox --yes \
   --home ~/.local/share/devbox-home \
+  --volume ~/.ssh:$HOME/.local/share/devbox-home/.ssh:ro \
   --init-hooks "if [ ! -f \$HOME/.devbox-initialized ]; then \
     runuser -u \$(stat -c %u \$HOME) -- sh -c \"cd \$HOME && \
       git init && \
-      git remote add origin https://github.com/MatteoBoursault/devbox.git && \
+      git remote add origin git@github.com:MatteoBoursault/devbox.git && \
       git fetch && \
       git checkout main && \
-      mkdir -p \$HOME/.ssh && \
-      ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa \$HOME/.ssh/id_rsa && \
-      ln -sf \$DISTROBOX_HOST_HOME/.ssh/id_rsa.pub \$HOME/.ssh/id_rsa.pub && \
-      ln -sf \$DISTROBOX_HOST_HOME/.ssh/known_hosts \$HOME/.ssh/known_hosts && \
       touch \$HOME/.devbox-initialized\"; \
   fi"
 ```
