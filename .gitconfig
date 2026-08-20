@@ -1,0 +1,8 @@
+[user]
+	email = matteo.boursault.pro@gmail.com
+  name = matteo
+
+[diff]
+  external = difft
+[pager]
+  diff = true
