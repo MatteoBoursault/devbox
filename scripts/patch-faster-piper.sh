@@ -10,8 +10,8 @@
 # bloquées (« faster-piper:locked-timeout ») jusqu'à expiration du TTL (60 s).
 #
 # À relancer après tout `ya pkg install` / `ya pkg upgrade` qui réinstalle le
-# plugin. Supprimer ce script quand Arch aura yazi ≥ 26.8.15 et que le pin sera
-# levé.
+# plugin. Supprimer ce script (ainsi que le flag --discard des commandes ya pkg)
+# quand Arch aura yazi ≥ 26.8.15 et que le pin sera levé.
 set -e
 DIR="$(cd "$(dirname "$0")/.." && pwd)"
 PLUGIN="$HOME/.config/yazi/plugins/faster-piper.yazi"
@@ -19,16 +19,16 @@ PLUGIN="$HOME/.config/yazi/plugins/faster-piper.yazi"
 # État stable : plugin présent et déjà patché → rien à faire (évite le message
 # « operation has been aborted » de `ya pkg install` sur plugin modifié).
 if [ -f "$PLUGIN/main.lua" ] && grep -q "local function instance_id" "$PLUGIN/main.lua"; then
-	echo "faster-piper: déjà installé et patché"
-	exit 0
+  echo "faster-piper: déjà installé et patché"
+  exit 0
 fi
 
 ya pkg install
 
 if [ ! -f "$PLUGIN/main.lua" ]; then
-	echo "faster-piper: plugin introuvable après ya pkg install ($PLUGIN)" >&2
-	exit 1
+  echo "faster-piper: plugin introuvable après ya pkg install ($PLUGIN)" >&2
+  exit 1
 fi
 
-patch -d "$PLUGIN" -p1 < "$DIR/scripts/faster-piper-26.5.6.patch"
+patch -d "$PLUGIN" -p1 <"$DIR/scripts/faster-piper-26.5.6.patch"
 echo "faster-piper: backport appliqué (verrou libéré sur peek annulé)"
