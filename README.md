@@ -42,7 +42,7 @@ distrobox create --name devbox \
       git remote add origin git@github.com:MatteoBoursault/devbox.git && \
       git fetch && \
       git checkout main && \
-      just update && \
+      just setup && \
       touch \$HOME/.devbox-initialized\"; \
   fi"
 ```

@@ -15,5 +15,8 @@ update:
     ya pkg upgrade
     ./scripts/patch-faster-piper.sh
     nvim --headless "+lua vim.pack.update(nil, { force = true })" +qa
-    bat cache --build
     @echo "✓ Mise à jour terminée"
+
+setup: update
+    bat cache --build
+    @echo "✓ Initialisation terminée"

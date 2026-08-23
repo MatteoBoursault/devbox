@@ -1,16 +1,36 @@
 FROM docker.io/archlinux:latest
 
-RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm --needed \
-        base-devel git curl wget sudo just rustup
-
 ENV RUSTUP_HOME=/usr/local/rustup \
     CARGO_HOME=/usr/local/cargo \
-    PATH=/usr/local/cargo/bin:/usr/lib/rustup/bin:$PATH
+    HERDR_INSTALL_DIR=/usr/local/herdr/bin \
+    BUN_INSTALL=/usr/local/bun
+
+ENV PATH=/usr/lib/rustup/bin:$CARGO_HOME/bin:$HERDR_INSTALL_DIR:$BUN_INSTALL/bin:$PATH
+
+RUN pacman -Syu --noconfirm --needed \
+      # base
+      base-devel git curl wget sudo just ttf-hack-nerd \
+      # language framework
+      rustup bun \
+      # tools
+      fish starship kitty yazi \
+      bat eza zoxide skim ripgrep fd \
+      bandwhich btop difftastic procs trash-cli \
+      neovim tree-sitter-cli \
+      # lsp/linter/formatter
+      uv ruff mypy \
+      clang cppcheck \
+      stylua luacheck lua-language-server \
+      shellcheck shfmt \
+      biome taplo-cli yamllint markdownlint-cli
+
+RUN curl -fsSL https://herdr.dev/install.sh | sh
+
+RUN bun install -g omp typescript typescript-language-server
+
 RUN rustup default stable && \
     rustup component add clippy rustfmt rust-analyzer rust-src && \
-    mkdir -p /usr/local/rustup /usr/local/cargo && \
-    chmod -R a+rwX /usr/local/rustup /usr/local/cargo # a+rwX pour que le user runtime et le builder compilent sans sudo.
+    mkdir -p $CARGO_HOME && chmod -R a+rwX $CARGO_HOME
 
 # makepkg/paru refusent de tourner en root : on crée un user dédié au build des paquets AUR.
 #   -m       : crée son home /home/builder
@@ -33,18 +53,4 @@ RUN git clone https://aur.archlinux.org/paru.git && \
 RUN paru -S --noconfirm grex
 
 USER root
-RUN pacman -S --noconfirm --needed \
-        fish starship kitty yazi \
-        bat eza zoxide skim ripgrep fd \
-        bandwhich btop difftastic procs trash-cli \
-        neovim tree-sitter-cli bun ttf-hack-nerd
-RUN pacman -S --noconfirm --needed \
-        uv ruff mypy \
-        clang cppcheck \
-        stylua luacheck lua-language-server \
-        shellcheck shfmt \
-        biome taplo-cli yamllint markdownlint-cli
-
-RUN curl -fsSL https://herdr.dev/install.sh | sh
-
-RUN BUN_INSTALL=/usr/local bun install -g omp typescript typescript-language-server
+RUN chmod -R a+rwX $RUSTUP_HOME $CARGO_HOME $HERDR_INSTALL_DIR $BUN_INSTALL
