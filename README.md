@@ -42,6 +42,7 @@ distrobox create --name devbox \
       git remote add origin git@github.com:MatteoBoursault/devbox.git && \
       git fetch && \
       git checkout main && \
+      just update && \
       touch \$HOME/.devbox-initialized\"; \
   fi"
 ```
@@ -49,11 +50,6 @@ distrobox create --name devbox \
 Entrer dans la devbox (lance herdr) :
 ```bash
 distrobox enter --no-workdir devbox -- kitty herdr
-```
-
-Pour un shell simple (dépannage) :
-```bash
-distrobox enter --no-workdir devbox
 ```
 
 ## Commandes utiles

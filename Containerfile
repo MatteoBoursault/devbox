@@ -30,14 +30,14 @@ RUN git clone https://aur.archlinux.org/paru.git && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru
-RUN paru -S --noconfirm bun ttf-hack-nerd grex
+RUN paru -S --noconfirm grex
 
 USER root
 RUN pacman -S --noconfirm --needed \
         fish starship kitty yazi \
         bat eza zoxide skim ripgrep fd \
         bandwhich btop difftastic procs trash-cli \
-        neovim tree-sitter-cli
+        neovim tree-sitter-cli bun ttf-hack-nerd
 RUN pacman -S --noconfirm --needed \
         uv ruff mypy \
         clang cppcheck \

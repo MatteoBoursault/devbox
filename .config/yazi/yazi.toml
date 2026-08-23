@@ -20,5 +20,5 @@ url = "*/"
 run = 'faster-piper -- eza -TL=2 --color=always --icons=always --group-directories-first --no-quotes "$1"'
 
 [[plugin.prepend_previewers]]
-url = "*.{rs,c,cpp,py,js,ts,lua,json,md,sh,toml,yaml}"
+url = "*"
 run = 'faster-piper -- bat --color=always --style=plain "$1"'
