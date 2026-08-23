@@ -1,14 +1,14 @@
 -- ============================================================
 -- Helpers
 -- ============================================================
-Map = vim.keymap.set
-function Nmap(lhs, rhs, desc, opts)
+local Map = vim.keymap.set
+local function Nmap(lhs, rhs, desc, opts)
 	Map("n", lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
 end
-function Vmap(lhs, rhs, desc, opts)
+local function Vmap(lhs, rhs, desc, opts)
 	Map("v", lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
 end
-function Nvmap(lhs, rhs, desc, opts)
+local function Nvmap(lhs, rhs, desc, opts)
 	Map({ "n", "v" }, lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
 end
 

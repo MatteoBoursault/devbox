@@ -2,7 +2,8 @@
 herdr_update := if env_var_or_default("HERDR_ENV", "") == "1" {
   "echo \"Dans une instance herdr : mise à jour de herdr ignorée\""
 } else {
-  "herdr update"
+  "herdr update && \
+    herdr completion fish > ~/.config/fish/completions/herdr.fish"
 }
 
 update:

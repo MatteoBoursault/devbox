@@ -4,9 +4,32 @@
 .ssh/
 .secrets/
 
+.local/
+!.local/bin/
+!.local/bin/**
+
 .config/fish/fish_variables
 .config/fish/fish_history
+.config/fish/completions/herdr.fish
 
 .config/yazi/plugins/faster-piper.yazi/
 
 .config/nvim/nvim-pack-lock.json
+
+.config/herdr/*.log
+.config/herdr/.plugins.lock
+.config/herdr/release-notes.json
+.config/herdr/session.json
+
+.config/omp/agent.db*
+.config/omp/history.db*
+.config/omp/models.db*
+.config/omp/last-changelog-version
+.config/omp/sessions/
+.config/omp/terminal-sessions/
+
+.bash_logout
+.bash_profile
+.bashrc
+
+.omp/

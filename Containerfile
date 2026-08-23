@@ -13,10 +13,9 @@ RUN pacman -Syu --noconfirm --needed \
       # language framework
       rustup bun \
       # tools
-      fish starship kitty yazi \
+      fish starship kitty yazi neovim \
       bat eza zoxide skim ripgrep fd \
       bandwhich btop difftastic procs trash-cli \
-      neovim tree-sitter-cli \
       # lsp/linter/formatter
       uv ruff mypy \
       clang cppcheck \
@@ -54,3 +53,4 @@ RUN paru -S --noconfirm grex
 
 USER root
 RUN chmod -R a+rwX $RUSTUP_HOME $CARGO_HOME $HERDR_INSTALL_DIR $BUN_INSTALL
+RUN pacman -Scc --noconfirm

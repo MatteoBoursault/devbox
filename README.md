@@ -109,12 +109,6 @@ Cette version devra contenir un Containerfile construisant une image opérationn
 Celle-ci contiendra l'ensemble des outils présentés précédemment, configurés de manière minimale.
 La devbox se voulant évolutive, les configurations des outils de cette version n'ont pas besoin d'être parfaites.
 
-TODO :
-- ajouter et configurer
-    - nvim
-        - trouver une distribution complète et l'adapter
-    - omp
-
 ### Version 2.0
 Cette version se concentrera sur l'observabilité.
 L'objectif étant de mettre en place un maximum de hooks qui renseigneront les actions effectuées (touches de clavier, raccourcis nvim, déplacements dans yazi/herdr...) dans une base de données. Celle-ci serait par la suite analysée pour identifier des patterns récurrents qui seraient éliminés en créant par exemple de nouveaux raccourcis.

@@ -1,3 +1,10 @@
-skills:
-  customDirectories:
+skills: 
+  customDirectories: 
     - ~/.config/omp/skills
+modelRoles: 
+  default: deepseek/deepseek-v4-flash
+symbolPreset: nerd
+theme: 
+  dark: titanium
+  light: light
+setupVersion: 1
