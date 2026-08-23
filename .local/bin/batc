@@ -1,0 +1,35 @@
+#!/usr/bin/env fish
+
+set -l file $argv[1]
+set -l line $argv[2]
+set -l passthru $argv[3..-1]
+
+if not set -q file[1]
+    echo "usage: batc FILE LINE [bat args...]" >&2
+    exit 2
+end
+if not string match -qr '^[0-9]+$' -- "$line"
+    echo "batc: LINE must be a positive integer, got '$line'" >&2
+    exit 2
+end
+
+# Real terminal height, even when stdout is a pipe (sk preview) or TERM=dumb:
+# stty reads the controlling tty via ioctl, not terminfo. Fall back to tput,
+# then $LINES.
+set -l lines (stty size < /dev/tty 2>/dev/null | string split ' ')[1]
+if not set -q lines[1]
+    set lines (tput lines 2>/dev/null)
+end
+if not set -q lines[1]
+    set lines $LINES
+end
+
+set -l center (math "floor($lines / 2)")
+if test $line -lt $center
+    set center $line
+end
+
+set -l start (math "$line - $center")
+set -l end (math "$lines + $start")
+
+bat --line-range $start:$end --paging never --number $passthru $file

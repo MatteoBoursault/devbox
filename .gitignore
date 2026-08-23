@@ -1,8 +1,8 @@
 .devbox-initialized
 
-.local/
 .cache/
 .ssh/
+.secrets/
 
 .config/fish/fish_variables
 .config/fish/fish_history
