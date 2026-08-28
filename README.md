@@ -49,7 +49,7 @@ distrobox create --name devbox \
 
 Entrer dans la devbox (lance herdr) :
 ```bash
-distrobox enter --no-workdir devbox -- kitty herdr
+distrobox enter --clean-path --no-workdir devbox -- kitty herdr
 ```
 
 ## Commandes utiles

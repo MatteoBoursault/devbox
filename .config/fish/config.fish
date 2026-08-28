@@ -10,7 +10,7 @@ zoxide init fish --cmd cd | source
 # ENV
 fish_add_path ~/.local/bin
 set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
-set -gx PI_CODING_AGENT_DIR ~/.config/omp
+set -gx PI_CODING_AGENT_DIR ~/.config/pi
 set -gx EDITOR nvim
 
 # ABBREVIATIONS

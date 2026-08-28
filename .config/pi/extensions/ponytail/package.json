@@ -1,0 +1,11 @@
+{
+  "name": "ponytail-pi-extension",
+  "version": "4.9.0",
+  "private": true,
+  "type": "module",
+  "pi": {
+    "extensions": [
+      "./pi-extension/index.js"
+    ]
+  }
+}

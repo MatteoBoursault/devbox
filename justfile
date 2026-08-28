@@ -12,6 +12,7 @@ update:
     # TODO_devbox : rustup update
     {{ herdr_update }}
     bun update -g
+    PI_CODING_AGENT_DIR="$HOME/.config/pi" pi update --all
     ya pkg install --discard
     ya pkg upgrade
     ./scripts/patch-faster-piper.sh
@@ -20,4 +21,5 @@ update:
 
 setup: update
     bat cache --build
+    rtk init -g --agent pi
     @echo "✓ Initialisation terminée"

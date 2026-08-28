@@ -25,7 +25,7 @@ RUN pacman -Syu --noconfirm --needed \
 
 RUN curl -fsSL https://herdr.dev/install.sh | sh
 
-RUN bun install -g omp typescript typescript-language-server
+RUN bun add -g --ignore-scripts omp typescript typescript-language-server node-gyp @earendil-works/pi-coding-agent
 
 RUN rustup default stable && \
     rustup component add clippy rustfmt rust-analyzer rust-src && \
@@ -49,7 +49,7 @@ RUN git clone https://aur.archlinux.org/paru.git && \
     makepkg -si --noconfirm && \
     cd .. && \
     rm -rf paru
-RUN paru -S --noconfirm grex
+RUN paru -S --noconfirm grex rtk-bin
 
 USER root
 RUN chmod -R a+rwX $RUSTUP_HOME $CARGO_HOME $HERDR_INSTALL_DIR $BUN_INSTALL

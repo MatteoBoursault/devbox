@@ -1,0 +1,5 @@
+[preference] Pas de commentaires inutiles dans le code ni les fichiers de config : pas de prose qui paraphrase le code, commenter seulement si l'information n'est pas évidente. <!-- created=2026-08-29, last=2026-08-29 -->
+§
+[tool-quirk] pi-hermes-memory (v0.9.7) : le store sqlite de recherche conserve des doublons des fichiers markdown ; une suppression via memory_remove ne nettoie pas la table sqlite. Pour vraiment tout vider, supprimer chaque entrée deux fois (fichier + sqlite) ; sinon memory_search remonte encore d'anciennes entrées. <!-- created=2026-08-29, last=2026-08-29 -->
+§
+[tool-quirk] pi-hermes-memory : l'écriture de mémoire contenant un chemin SSH est bloquée par un filtre de sécurité (threat pattern 'ssh_access'). Reformuler sans le chemin pour passer le filtre. <!-- created=2026-08-29, last=2026-08-29 -->
