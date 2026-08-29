@@ -25,7 +25,7 @@ RUN pacman -Syu --noconfirm --needed \
 
 RUN curl -fsSL https://herdr.dev/install.sh | sh
 
-RUN bun add -g --ignore-scripts omp typescript typescript-language-server node-gyp @earendil-works/pi-coding-agent
+RUN bun add -g --ignore-scripts omp tree-sitter-cli typescript typescript-language-server node-gyp @earendil-works/pi-coding-agent
 
 RUN rustup default stable && \
     rustup component add clippy rustfmt rust-analyzer rust-src && \
