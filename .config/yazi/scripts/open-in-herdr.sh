@@ -4,7 +4,7 @@
 # chemins en arguments. Nécessite de tourner dans une session herdr.
 #
 # TODO_devbox: herdr (version officielle) ne sait lancer qu'un shell dans un
-# nouvel onglet, pas une commande directe (issue herdrdev/herdr#1695). On passe
+# nouvel onglet, pas une commande directe (discussion herdrdev/herdr#1695). On passe
 # donc le fichier via `--env HERDR_OPEN_FILE`, et config.fish l'ouvre au
 # démarrage du shell (avant l'invite) → pas de course au démarrage ni de
 # dépendance au prompt. À remplacer par `pane.split --argv` (ou équivalent)

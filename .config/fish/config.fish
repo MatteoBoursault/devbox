@@ -32,7 +32,7 @@ bind -M default \cr skim-history-widget
 bind -M insert \cr skim-history-widget
 
 # TODO_devbox: herdr (officiel) ne sait lancer qu'un shell dans un nouvel onglet,
-# pas une commande directe (herdrdev/herdr#1695). L'opener yazi crée donc l'onglet
+# pas une commande directe (discussion herdrdev/herdr#1695). L'opener yazi crée donc l'onglet
 # avec `--env HERDR_OPEN_FILE=<fichier>` et on l'ouvre ici, au démarrage du shell
 # (avant l'invite) → pas de course. À retirer quand herdr aura `pane.split --argv`.
 if set -q HERDR_OPEN_FILE

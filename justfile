@@ -9,13 +9,12 @@ herdr_update := if env_var_or_default("HERDR_ENV", "") == "1" {
 update:
     sudo pacman -Syu --noconfirm
     paru -Syu --noconfirm
-    # TODO_devbox : rustup update
+    rustup update
     {{ herdr_update }}
     bun update -g
     PI_CODING_AGENT_DIR="$HOME/.config/pi" pi update --all
-    ya pkg install --discard
+    ya pkg install
     ya pkg upgrade
-    ./scripts/patch-faster-piper.sh
     nvim --headless "+lua vim.pack.update(nil, { force = true })" +qa
     @echo "✓ Mise à jour terminée"
 
