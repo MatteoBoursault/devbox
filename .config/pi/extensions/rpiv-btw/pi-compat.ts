@@ -35,16 +35,16 @@ type IsContextOverflowFn = typeof import("@earendil-works/pi-ai/compat").isConte
  * other runtime methods through `this`.
  */
 export function getRuntimeCompleteSimple(modelRegistry: unknown): CompleteSimpleFn | undefined {
-	try {
-		if (modelRegistry === null || typeof modelRegistry !== "object") return undefined;
-		const runtime = (modelRegistry as { runtime?: unknown }).runtime;
-		if (runtime === null || typeof runtime !== "object") return undefined;
-		const completeSimple = (runtime as { completeSimple?: unknown }).completeSimple;
-		return typeof completeSimple === "function" ? (completeSimple.bind(runtime) as CompleteSimpleFn) : undefined;
-	} catch {
-		// A malformed/private host shape should retain the version-tolerant fallback.
-		return undefined;
-	}
+  try {
+    if (modelRegistry === null || typeof modelRegistry !== "object") return undefined;
+    const runtime = (modelRegistry as { runtime?: unknown }).runtime;
+    if (runtime === null || typeof runtime !== "object") return undefined;
+    const completeSimple = (runtime as { completeSimple?: unknown }).completeSimple;
+    return typeof completeSimple === "function" ? (completeSimple.bind(runtime) as CompleteSimpleFn) : undefined;
+  } catch {
+    // A malformed/private host shape should retain the version-tolerant fallback.
+    return undefined;
+  }
 }
 
 /**
@@ -63,33 +63,33 @@ const MODULE_NOT_FOUND_CODES = new Set(["ERR_PACKAGE_PATH_NOT_EXPORTED", "ERR_MO
  *  and tooling (vitest's mock layer, some bundlers) nest the real code under
  *  `.cause`. Bounded against pathological self-referential chains. */
 function isModuleNotFound(err: unknown): boolean {
-	for (
-		let cur: unknown = err, depth = 0;
-		cur != null && depth < 16;
-		cur = (cur as { cause?: unknown }).cause, depth++
-	) {
-		if (typeof cur === "object" && MODULE_NOT_FOUND_CODES.has((cur as { code?: unknown }).code as string)) {
-			return true;
-		}
-	}
-	return false;
+  for (
+    let cur: unknown = err, depth = 0;
+    cur != null && depth < 16;
+    cur = (cur as { cause?: unknown }).cause, depth++
+  ) {
+    if (typeof cur === "object" && MODULE_NOT_FOUND_CODES.has((cur as { code?: unknown }).code as string)) {
+      return true;
+    }
+  }
+  return false;
 }
 
 export async function loadCompleteSimple(): Promise<CompleteSimpleFn> {
-	let mod: { completeSimple?: CompleteSimpleFn };
-	try {
-		mod = (await import("@earendil-works/pi-ai/compat")) as { completeSimple?: CompleteSimpleFn };
-	} catch (err) {
-		if (!isModuleNotFound(err)) throw err; // a real /compat failure must surface, not mask as a fallback
-		mod = (await import("@earendil-works/pi-ai")) as { completeSimple?: CompleteSimpleFn };
-	}
-	const completeSimple = mod.completeSimple;
-	if (typeof completeSimple !== "function") {
-		throw new Error(
-			"pi-ai does not expose completeSimple on /compat or the package root — unsupported host pi-ai version",
-		);
-	}
-	return completeSimple;
+  let mod: { completeSimple?: CompleteSimpleFn };
+  try {
+    mod = (await import("@earendil-works/pi-ai/compat")) as { completeSimple?: CompleteSimpleFn };
+  } catch (err) {
+    if (!isModuleNotFound(err)) throw err; // a real /compat failure must surface, not mask as a fallback
+    mod = (await import("@earendil-works/pi-ai")) as { completeSimple?: CompleteSimpleFn };
+  }
+  const completeSimple = mod.completeSimple;
+  if (typeof completeSimple !== "function") {
+    throw new Error(
+      "pi-ai does not expose completeSimple on /compat or the package root — unsupported host pi-ai version",
+    );
+  }
+  return completeSimple;
 }
 
 /**
@@ -108,16 +108,16 @@ export async function loadCompleteSimple(): Promise<CompleteSimpleFn> {
  * still rethrows.
  */
 export async function loadIsContextOverflow(): Promise<IsContextOverflowFn | undefined> {
-	let mod: { isContextOverflow?: IsContextOverflowFn };
-	try {
-		mod = (await import("@earendil-works/pi-ai/compat")) as { isContextOverflow?: IsContextOverflowFn };
-	} catch (err) {
-		if (!isModuleNotFound(err)) throw err; // a real /compat failure must surface, not mask as a fallback
-		mod = (await import("@earendil-works/pi-ai")) as { isContextOverflow?: IsContextOverflowFn };
-	}
-	const isContextOverflow = mod.isContextOverflow;
-	if (typeof isContextOverflow !== "function") {
-		return undefined; // expected absence on a host lacking the export — degrade, don't crash
-	}
-	return isContextOverflow;
+  let mod: { isContextOverflow?: IsContextOverflowFn };
+  try {
+    mod = (await import("@earendil-works/pi-ai/compat")) as { isContextOverflow?: IsContextOverflowFn };
+  } catch (err) {
+    if (!isModuleNotFound(err)) throw err; // a real /compat failure must surface, not mask as a fallback
+    mod = (await import("@earendil-works/pi-ai")) as { isContextOverflow?: IsContextOverflowFn };
+  }
+  const isContextOverflow = mod.isContextOverflow;
+  if (typeof isContextOverflow !== "function") {
+    return undefined; // expected absence on a host lacking the export — degrade, don't crash
+  }
+  return isContextOverflow;
 }

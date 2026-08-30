@@ -22,23 +22,23 @@ import type { AssistantMessage, UserMessage } from "@earendil-works/pi-ai";
 // is the unmodified completeSimple response. Stable object references across calls →
 // byte-identical prompt prefix on subsequent /btw invocations (cache parity).
 export interface BtwTurn {
-	userMessage: UserMessage;
-	assistantMessage: AssistantMessage;
+  userMessage: UserMessage;
+  assistantMessage: AssistantMessage;
 }
 
 // Extract text from a UserMessage's content.
 export function userMessageText(msg: UserMessage): string {
-	if (typeof msg.content === "string") return msg.content;
-	return msg.content
-		.filter((c): c is { type: "text"; text: string } => c.type === "text")
-		.map((c) => c.text)
-		.join("\n");
+  if (typeof msg.content === "string") return msg.content;
+  return msg.content
+    .filter((c): c is { type: "text"; text: string } => c.type === "text")
+    .map((c) => c.text)
+    .join("\n");
 }
 
 // Extract text from an AssistantMessage's content (text parts only).
 export function assistantMessageText(msg: AssistantMessage): string {
-	return msg.content
-		.filter((c): c is { type: "text"; text: string } => c.type === "text")
-		.map((c) => c.text)
-		.join("\n");
+  return msg.content
+    .filter((c): c is { type: "text"; text: string } => c.type === "text")
+    .map((c) => c.text)
+    .join("\n");
 }

@@ -10,8 +10,7 @@ import path from "node:path";
 
 const HERDR_ENV = process.env.HERDR_ENV;
 const socketPath = process.env.HERDR_SOCKET_PATH;
-const socketEndpoint =
-  process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
+const socketEndpoint = process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
 const paneId = process.env.HERDR_PANE_ID;
 const source = "herdr:omp";
 
@@ -86,10 +85,7 @@ function nextReportSeq(): number {
 }
 
 export function isAbsoluteSessionPath(file: unknown): file is string {
-  return (
-    typeof file === "string" &&
-    (path.posix.isAbsolute(file) || path.win32.isAbsolute(file))
-  );
+  return typeof file === "string" && (path.posix.isAbsolute(file) || path.win32.isAbsolute(file));
 }
 
 function updateSessionRef(ctx: any): void {

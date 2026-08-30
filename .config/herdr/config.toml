@@ -1,3 +1,4 @@
+onboarding = false
 [theme]
 name = "terminal"
 
@@ -8,28 +9,28 @@ enabled = false
 resize_mode = "ctrl+shift+r"
 
 # PANES
-focus_pane_left  = "ctrl+h"
-focus_pane_down  = "ctrl+t"
-focus_pane_up    = "ctrl+n"
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+t"
+focus_pane_up = "ctrl+n"
 focus_pane_right = "ctrl+s"
 
-swap_pane_left  = "ctrl+shift+h"
-swap_pane_down  = "ctrl+shift+t"
-swap_pane_up    = "ctrl+shift+n"
+swap_pane_left = "ctrl+shift+h"
+swap_pane_down = "ctrl+shift+t"
+swap_pane_up = "ctrl+shift+n"
 swap_pane_right = "ctrl+shift+s"
 
-split_vertical   = "ctrl+shift+v"
+split_vertical = "ctrl+shift+v"
 split_horizontal = "ctrl+shift+b"
-close_pane       = "ctrl+shift+q"
+close_pane = "ctrl+shift+q"
 
 # TABS
 previous_tab = "ctrl+a"
-new_tab      = "ctrl+o"
-close_tab    = "ctrl+e"
-next_tab     = "ctrl+u"
+new_tab = "ctrl+o"
+close_tab = "ctrl+e"
+next_tab = "ctrl+u"
 
 # WORKSPACES
 previous_workspace = "ctrl+shift+a"
-new_workspace      = "ctrl+shift+o"
-close_workspace    = "ctrl+shift+e"
-next_workspace     = "ctrl+shift+u"
+new_workspace = "ctrl+shift+o"
+close_workspace = "ctrl+shift+e"
+next_workspace = "ctrl+shift+u"

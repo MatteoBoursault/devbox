@@ -35,7 +35,9 @@ export function resolveSessionMode(entries, fallbackMode = DEFAULT_MODE) {
 
 export function parsePonytailCommand(text, defaultMode = DEFAULT_MODE) {
   const fallback = normalizePersistedMode(defaultMode) || DEFAULT_MODE;
-  const normalizedText = String(text || "").trim().toLowerCase();
+  const normalizedText = String(text || "")
+    .trim()
+    .toLowerCase();
 
   if (!normalizedText) {
     return { type: "set-mode", mode: fallback === "off" ? "full" : fallback };
@@ -73,7 +75,12 @@ export default function ponytailExtension(pi) {
     if (!c?.ui?.setStatus) return;
     // ponytail: try/catch guards against pi-web theme proxy throwing before initTheme
     let theme;
-    try { theme = c.ui.theme; if (!theme?.fg) return; } catch { return; }
+    try {
+      theme = c.ui.theme;
+      if (!theme?.fg) return;
+    } catch {
+      return;
+    }
     if (currentMode === "off") {
       c.ui.setStatus("ponytail", "");
       return;
@@ -82,7 +89,10 @@ export default function ponytailExtension(pi) {
     const icon = levelIcons[currentMode] || "";
     const label = currentMode.toUpperCase();
     const indicator = isActive ? theme.fg("accent", "●") : theme.fg("dim", "○");
-    c.ui.setStatus("ponytail", indicator + " 🐴 " + theme.fg("muted", "ponytail: ") + theme.fg("text", icon + " " + label));
+    c.ui.setStatus(
+      "ponytail",
+      indicator + " 🐴 " + theme.fg("muted", "ponytail: ") + theme.fg("text", icon + " " + label),
+    );
   }
 
   const setMode = (mode, ctx) => {
@@ -123,9 +133,10 @@ export default function ponytailExtension(pi) {
           const written = writeDefaultMode(parsed.mode);
           if (written) {
             configuredDefaultMode = getDefaultMode();
-            const message = configuredDefaultMode === written
-              ? `Default Ponytail mode set to ${written}.`
-              : `Saved default ${written}, but env override keeps default at ${configuredDefaultMode}.`;
+            const message =
+              configuredDefaultMode === written
+                ? `Default Ponytail mode set to ${written}.`
+                : `Saved default ${written}, but env override keeps default at ${configuredDefaultMode}.`;
             ctx?.ui?.notify?.(message, "info");
           }
         } catch (e) {

@@ -1,9 +1,7 @@
 {
   "defaultProvider": "deepseek",
   "defaultModel": "deepseek-v4-flash",
-  "npmCommand": [
-    "bun"
-  ],
+  "npmCommand": ["bun"],
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",

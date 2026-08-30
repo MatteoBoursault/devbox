@@ -11,9 +11,9 @@
 # quand herdr l'aura ajouté.
 
 for file in "$@"; do
-	dir=$(dirname -- "$file")
-	label=$(basename -- "$file")
+  dir=$(dirname -- "$file")
+  label=$(basename -- "$file")
 
-	# Crée l'onglet dans le workspace courant ; config.fish ouvre HERDR_OPEN_FILE.
-	herdr tab create --cwd "$dir" --label "$label" --focus --env "HERDR_OPEN_FILE=$file"
+  # Crée l'onglet dans le workspace courant ; config.fish ouvre HERDR_OPEN_FILE.
+  herdr tab create --cwd "$dir" --label "$label" --focus --env "HERDR_OPEN_FILE=$file"
 done

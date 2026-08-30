@@ -1,4 +1,4 @@
 require("zen-mode"):setup()
 require("bookmarks"):setup({
-	notify = { enable = false },
+  notify = { enable = false },
 })
