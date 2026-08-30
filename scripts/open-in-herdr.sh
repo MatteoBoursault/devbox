@@ -11,6 +11,10 @@
 # quand herdr l'aura ajouté.
 
 for file in "$@"; do
+  case "$file" in
+    /*) ;;
+    *) file="$PWD/$file" ;;
+  esac
   dir=$(dirname -- "$file")
   label=$(basename -- "$file")
 
