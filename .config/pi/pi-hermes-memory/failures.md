@@ -39,3 +39,13 @@
 [correction] scripts/format.lua : compter les « fichiers trouvés/scannés » donne l'illusion que le script reformate à chaque appel, alors que les formatters sont idempotents. Fix : hash md5sum avant/après pour compter les fichiers réellement modifiés, pas les scannés. <!-- created=2026-08-30, last=2026-08-30 -->
 §
 [insight] Les sorties de formatters polluaient le retour du script de formatage ; les rediriger vers un log temporaire n'affiché qu'en cas d'échec clarifie le retour (succès = uniquement « → formatter : N fichier(s) »). <!-- created=2026-08-30, last=2026-08-30 -->
+§
+[insight] Les marqueurs TODO_devbox dans le dépôt devbox sont souvent des workarounds temporaires qui peuvent devenir obsolètes ou nécessiter une mise à jour. Il faut les vérifier régulièrement et les mettre à jour (ex. herdr #1695 est une discussion, pas un bug ; le pin faster-piper a été levé quand la version Arch a atteint 26.8.15). <!-- created=2026-08-30, last=2026-08-30 -->
+§
+[insight] Les sessions pi (fichiers .config/pi/sessions/*.jsonl) ne sont pas versionnées et sont purgées : il ne faut pas compter sur elles pour retrouver l'historique des décisions. Le seul historique fiable est le dépôt git (commits). <!-- created=2026-08-30, last=2026-08-30 -->
+§
+[insight] skim entoure les tokens de champ de guillemets simples lors du remplacement ({1} devient 'chemin'). Pour passer un chemin à sh -c via --bind execute, ne pas entourer {1} de guillemets doubles dans la commande : les guillemets simples restent littéraux et cassent le chemin. Utiliser {1} nu (ou un mécanisme qui gère les espaces autrement). <!-- created=2026-08-30, last=2026-08-30 -->
+§
+[correction] Le script ouvre-fichier-herdr (.config/yazi/scripts/open-in-herdr.sh) doit résoudre les chemins relatifs contre $PWD avant dirname/HERDR_OPEN_FILE, car sch passe des chemins relatifs alors que yazi passe des chemins absolus. Sans cette résolution, nvim ouvre un buffer vide (mauvais répertoire). <!-- created=2026-08-30, last=2026-08-30 -->
+§
+[correction] skim entoure les tokens de champ de guillemets simples lors du remplacement ({1} → 'chemin'). Ne pas ajouter de guillemets autour de {1} dans un bind execute : le shell retire les guillemets doubles mais les simples restent littéraux dans l'argument, causant des buffers vides et des labels parasites. Utiliser {1} nu, c'est skim qui quote. <!-- created=2026-08-30, last=2026-08-30 -->

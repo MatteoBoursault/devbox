@@ -21,3 +21,7 @@ Matteo exige des scripts minimalistes : il conteste systématiquement la taille 
 Matteo préfère que les scripts fonctionnent hors du dépôt git et sans dépendance à git quand ce n'est pas nécessaire (localisation par emplacement du script, pas par rev-parse). <!-- created=2026-08-30, last=2026-08-30 -->
 §
 Coding preferences: 2-space indent, 120-char line width. Values minimal code — no unnecessary variables/abstractions, single source of truth, no duplication, co-locate config with its consumer. Wants facts verified before acting (don't assume); asks to be questioned until 100% sure of the plan. <!-- created=2026-08-30, last=2026-08-30 -->
+§
+Matteo a demandé que la fonction fish `sch` ouvre un onglet herdr quand on édite un fichier, comme le fait actuellement yazi via open-in-herdr.sh. (Cette préférence spécifique doit être implémentée — il n'a pas encore précisé comment gérer le cas où herdr n'est pas disponible.) <!-- created=2026-08-30, last=2026-08-30 -->
+§
+Matteo a demandé que la fonction fish `sch` ouvre un onglet herdr quand on édite un fichier, comme le fait actuellement yazi via open-in-herdr.sh. Cette préférence est désormais implémentée : il n'a pas précisé comment gérer le cas où herdr n'est pas disponible. <!-- created=2026-08-30, last=2026-08-30 -->
