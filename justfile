@@ -22,4 +22,5 @@ update:
 setup: update
     bat cache --build
     rtk init -g --agent pi
+    git config core.hooksPath githooks
     @echo "✓ Initialisation terminée"
