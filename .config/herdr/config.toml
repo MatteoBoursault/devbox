@@ -1,7 +1,8 @@
 onboarding = false
 [theme]
-name = "terminal"
+name = "kanagawa"
 
+auto_switch = false
 [ui.sound]
 enabled = false
 
