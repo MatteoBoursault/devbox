@@ -3,7 +3,7 @@
 L'objectif de ce projet est de fournir un environnement de développement conteneurisé, reproductible et facilement déployable.
 Les parties conteneurisation et déploiement sont gérées par **podman** et **distrobox** (Arch Linux) : le **Containerfile** construit l'image des outils, le dépôt (cloné dans le home) versionne les configurations.
 
-Cet environnement de dev est pensé pour fonctionner uniquement dans le terminal et les raccourcis clavier sont adaptés à la disposition de clavier **Dvorak for programmer**.
+Cet environnement de dev est pensé pour fonctionner uniquement dans le terminal et les raccourcis clavier sont adaptés à la disposition de clavier **Dvorak for programmer** ([cf KEYBINDING.md](KEYBINDING.md]).
 
 ## Installation
 
@@ -51,7 +51,7 @@ distrobox create --name devbox \
   fi"
 ```
 
-Entrer dans la devbox (lance herdr) :
+Entrer dans la devbox :
 
 ```bash
 distrobox enter --clean-path --no-workdir devbox -- kitty herdr
@@ -76,7 +76,7 @@ La devbox contient les outils suivants, configurés pour fonctionner ensemble :
 - herdr (multiplexeur de terminal)
 - yazi (gestionnaire de fichiers)
 - nvim (IDE)
-- omp (harnais LLM)
+- pi (harnais LLM)
 - bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs, grex, trash-cli... (outils CLI)
 
 ## Langages
@@ -112,7 +112,7 @@ La devbox gère les langages suivants :
 
 ## Roadmap
 
-Version actuelle : 0.0
+Version actuelle : 1.0
 
 ### Version 1.0
 
