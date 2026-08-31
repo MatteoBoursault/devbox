@@ -8,24 +8,26 @@ ENV RUSTUP_HOME=/usr/local/rustup \
 ENV PATH=/usr/lib/rustup/bin:$CARGO_HOME/bin:$HERDR_INSTALL_DIR:$BUN_INSTALL/bin:$PATH
 
 RUN pacman -Syu --noconfirm --needed \
-      # base
-      base-devel git curl wget sudo just ttf-hack-nerd \
-      # language framework
-      rustup bun \
-      # tools
-      fish starship kitty yazi neovim \
-      bat eza zoxide skim ripgrep fd \
-      bandwhich btop difftastic procs trash-cli \
-      # lsp/linter/formatter
-      uv ruff mypy \
-      clang cppcheck \
-      stylua luacheck lua-language-server \
-      shellcheck shfmt \
-      biome taplo-cli yamllint markdownlint-cli
+  # base
+  base-devel git curl wget sudo just ttf-hack-nerd \
+  # language framework
+  rustup bun \
+  # tools
+  fish starship kitty yazi neovim \
+  bat eza zoxide skim ripgrep fd \
+  bandwhich btop difftastic procs trash-cli \
+  # lsp/linter/formatter
+  uv ruff mypy \
+  clang cppcheck \
+  stylua luacheck lua-language-server \
+  shellcheck shfmt \
+  biome taplo-cli yamllint markdownlint-cli
 
 RUN curl -fsSL https://herdr.dev/install.sh | sh
 
-RUN bun add -g --ignore-scripts omp tree-sitter-cli typescript typescript-language-server node-gyp @earendil-works/pi-coding-agent
+RUN bun add -g --ignore-scripts \
+  tree-sitter-cli typescript typescript-language-server \
+  node-gyp @earendil-works/pi-coding-agent
 
 RUN rustup default stable && \
     rustup component add clippy rustfmt rust-analyzer rust-src && \
