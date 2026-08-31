@@ -31,12 +31,7 @@
 .config/pi/projects-memory/
 .config/pi/models-store.json
 .config/pi/run-history.jsonl
-.config/pi/pi-hermes-memory/sessions.db*
-.config/pi/pi-hermes-memory/.skills-migrated-to-extension-storage
-.config/pi/pi-hermes-memory/.*.recovery-*
-.config/pi/pi-hermes-memory/.*.retired-*
-.config/pi/pi-hermes-memory/.consolidation-locks/
-.config/pi/pi-hermes-memory/skills/
+.config/pi/pi-hermes-memory/
 .config/pi/.pi-hermes-locks.sqlite*
 .config/pi/web-search-cache/
 
