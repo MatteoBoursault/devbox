@@ -92,7 +92,9 @@ if arg[1] == "--staged" then
     io.stderr:write("erreur : --staged nécessite un dépôt git\n")
     os.exit(1)
   end
-  for l in io.popen("git -C " .. q(gitroot) .. " diff --cached --name-only --diff-filter=ACM"):lines() do
+  for l in
+    io.popen("git -C " .. q(gitroot) .. " diff --cached --name-only --diff-filter=ACM"):lines()
+  do
     paths[#paths + 1] = gitroot .. "/" .. l
   end
 else

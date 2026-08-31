@@ -1,8 +1,8 @@
 // Shared Ponytail instruction builder for Claude hooks and Pi extension.
 
 import fs from "node:fs";
-import path from "node:path";
 import os from "node:os";
+import path from "node:path";
 import { DEFAULT_MODE, normalizeMode, normalizePersistedMode } from "./ponytail-config.js";
 
 const INDEPENDENT_MODES = new Set(["review"]);
@@ -103,7 +103,7 @@ function getPonytailInstructions(mode) {
       "\n\n" +
       filterSkillBodyForMode(fs.readFileSync(SKILL_PATH, "utf8"), effectiveMode)
     );
-  } catch (e) {
+  } catch {
     return getFallbackInstructions(effectiveMode);
   }
 }

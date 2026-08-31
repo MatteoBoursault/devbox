@@ -11,9 +11,7 @@ wrap = "yes"
 tab_size = 2
 
 [opener]
-edit = [
-  { run = 'sh ~/scripts/open-in-herdr.sh %s', orphan = true },
-]
+edit = [{ run = 'sh ~/scripts/open-in-herdr.sh %s', orphan = true }]
 
 [[plugin.prepend_previewers]]
 url = "*/"

@@ -24,7 +24,11 @@ function parseSemver(raw: string): [number, number, number] | null {
 }
 
 // Calls `rtk rewrite`; returns the rewritten command or null (pass through).
-async function rewriteCommand(pi: ExtensionAPI, cmd: string, signal?: AbortSignal): Promise<string | null> {
+async function rewriteCommand(
+  pi: ExtensionAPI,
+  cmd: string,
+  signal?: AbortSignal,
+): Promise<string | null> {
   const result = await pi.exec("rtk", ["rewrite", cmd], {
     timeout: REWRITE_TIMEOUT_MS,
     signal,
@@ -47,7 +51,9 @@ export default async function (pi: ExtensionAPI) {
   if (parsed) {
     const [major, minor] = parsed;
     if (major === 0 && minor < MIN_SUPPORTED_RTK_MINOR) {
-      console.warn(`[rtk] rtk ${ver.stdout.trim()} is too old (need >= 0.23.0) — extension disabled`);
+      console.warn(
+        `[rtk] rtk ${ver.stdout.trim()} is too old (need >= 0.23.0) — extension disabled`,
+      );
       return;
     }
   }

@@ -138,7 +138,9 @@ export class BtwOverlayController implements Component {
 
   render(width: number): string[] {
     const banner = this.renderBanner(width);
-    const historyLines = this.history.map((h) => this.historyLine(userMessageText(h.userMessage), width));
+    const historyLines = this.history.map((h) =>
+      this.historyLine(userMessageText(h.userMessage), width),
+    );
     const echoLine = this.echoLine(this.question, width);
     const answerLines = this.renderAnswer(width);
     const footerAvail = Math.max(1, width - SIDE_PAD.length);
@@ -147,7 +149,8 @@ export class BtwOverlayController implements Component {
     if (this.history.length > 0) footerParts.push(FOOTER_CLEAR);
     footerParts.push(FOOTER_DISMISS);
     const footer =
-      SIDE_PAD + truncateToWidth(this.theme.fg("dim", footerParts.join(FOOTER_SEP)), footerAvail, "…", false);
+      SIDE_PAD +
+      truncateToWidth(this.theme.fg("dim", footerParts.join(FOOTER_SEP)), footerAvail, "…", false);
 
     // Natural content: banner + blank + history + echo + blank + answer [+ trim notice] + blank + footer
     const natural: string[] = [
@@ -217,7 +220,11 @@ export class BtwOverlayController implements Component {
     return `${SIDE_PAD + this.theme.fg("accent", BTW_LITERAL)} ${this.theme.fg("muted", qTrunc)}`;
   }
 
-  private wrapBodyLines(text: string, bodyWidth: number, colorFn?: (s: string) => string): string[] {
+  private wrapBodyLines(
+    text: string,
+    bodyWidth: number,
+    colorFn?: (s: string) => string,
+  ): string[] {
     const out: string[] = [];
     for (const ln of text.split("\n")) {
       const src = ln.length === 0 ? " " : ln;

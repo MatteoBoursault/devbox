@@ -10,7 +10,8 @@ import path from "node:path";
 
 const HERDR_ENV = process.env.HERDR_ENV;
 const socketPath = process.env.HERDR_SOCKET_PATH;
-const socketEndpoint = process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
+const socketEndpoint =
+  process.platform === "win32" && socketPath ? `\\\\.\\pipe\\${socketPath}` : socketPath;
 const paneId = process.env.HERDR_PANE_ID;
 const source = "herdr:omp";
 
@@ -21,7 +22,8 @@ function enabled() {
 let requestQueue = Promise.resolve();
 
 function sendRequestAttempt(request: unknown, timeoutMs: number): Promise<boolean> {
-  if (!enabled()) {
+  const endpoint = socketEndpoint;
+  if (!enabled() || !endpoint) {
     return Promise.resolve(true);
   }
 
@@ -38,7 +40,7 @@ function sendRequestAttempt(request: unknown, timeoutMs: number): Promise<boolea
       resolve(delivered);
     };
 
-    const socket = net.createConnection(socketEndpoint!);
+    const socket = net.createConnection(endpoint);
     socket.on("error", () => finish(false));
     socket.on("connect", () => socket.write(`${JSON.stringify(request)}\n`));
     socket.on("data", () => finish(true));
@@ -88,7 +90,7 @@ export function isAbsoluteSessionPath(file: unknown): file is string {
   return typeof file === "string" && (path.posix.isAbsolute(file) || path.win32.isAbsolute(file));
 }
 
-function updateSessionRef(ctx: any): void {
+function updateSessionRef(ctx: unknown): void {
   try {
     const file = ctx?.sessionManager?.getSessionFile?.();
     currentAgentSessionPath = isAbsoluteSessionPath(file) ? file : undefined;
@@ -201,9 +203,9 @@ async function drainStateQueue(): Promise<void> {
   }
 }
 
-function lastAssistantMessage(messages: unknown[]): any | undefined {
+function lastAssistantMessage(messages: unknown[]): unknown | undefined {
   for (let i = messages.length - 1; i >= 0; i -= 1) {
-    const message = messages[i] as any;
+    const message = messages[i] as unknown;
     if (message?.role === "assistant") {
       return message;
     }
@@ -211,7 +213,7 @@ function lastAssistantMessage(messages: unknown[]): any | undefined {
   return undefined;
 }
 
-function retryableErrorMessage(event: any): string | undefined {
+function retryableErrorMessage(event: unknown): string | undefined {
   const messages = Array.isArray(event?.messages) ? event.messages : [];
   const assistant = lastAssistantMessage(messages);
   if (assistant?.stopReason !== "error") {
@@ -225,9 +227,11 @@ function retryableErrorMessage(event: any): string | undefined {
   return errorMessage || "retryable provider error";
 }
 
-function askBlockedMessage(args: any): string {
+function askBlockedMessage(args: unknown): string {
   const questions = Array.isArray(args?.questions) ? args.questions : [];
-  const firstQuestion = questions.find((question: any) => typeof question?.question === "string");
+  const firstQuestion = questions.find(
+    (question: unknown) => typeof question?.question === "string",
+  );
   if (firstQuestion?.question) {
     return firstQuestion.question;
   }
@@ -319,7 +323,7 @@ export default function (pi) {
     retryTimer.unref?.();
   }
 
-  function activateRootSession(ctx: any, sessionStartSource = "startup"): boolean {
+  function activateRootSession(ctx: unknown, sessionStartSource = "startup"): boolean {
     if (ctx?.hasUI !== true) {
       return false;
     }

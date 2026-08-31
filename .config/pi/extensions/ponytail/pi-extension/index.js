@@ -1,15 +1,15 @@
 import {
   DEFAULT_MODE,
-  RUNTIME_MODES,
   getDefaultMode,
-  getQuietStartup,
   getHideStatus,
+  getQuietStartup,
+  isDeactivationCommand,
   normalizeMode,
   normalizePersistedMode,
-  isDeactivationCommand,
+  RUNTIME_MODES,
   writeDefaultMode,
 } from "../hooks/ponytail-config.js";
-import { getPonytailInstructions, filterSkillBodyForMode } from "../hooks/ponytail-instructions.js";
+import { filterSkillBodyForMode, getPonytailInstructions } from "../hooks/ponytail-instructions.js";
 
 export { filterSkillBodyForMode };
 export const readDefaultMode = getDefaultMode;
@@ -50,11 +50,15 @@ export function parsePonytailCommand(text, defaultMode = DEFAULT_MODE) {
   if (primary === "default") {
     // ponytail: a default must be a runtime level; review is session-only (#377).
     const mode = normalizeMode(secondary);
-    return mode ? { type: "set-default", mode } : { type: "invalid", reason: "invalid-default-mode" };
+    return mode
+      ? { type: "set-default", mode }
+      : { type: "invalid", reason: "invalid-default-mode" };
   }
 
   const mode = normalizeMode(primary);
-  return mode ? { type: "set-mode", mode } : { type: "invalid", reason: "invalid-mode", mode: primary };
+  return mode
+    ? { type: "set-mode", mode }
+    : { type: "invalid", reason: "invalid-mode", mode: primary };
 }
 
 export { writeDefaultMode };
@@ -91,7 +95,7 @@ export default function ponytailExtension(pi) {
     const indicator = isActive ? theme.fg("accent", "●") : theme.fg("dim", "○");
     c.ui.setStatus(
       "ponytail",
-      indicator + " 🐴 " + theme.fg("muted", "ponytail: ") + theme.fg("text", icon + " " + label),
+      `${indicator} 🐴 ${theme.fg("muted", "ponytail: ")}${theme.fg("text", `${icon} ${label}`)}`,
     );
   }
 
@@ -124,7 +128,10 @@ export default function ponytailExtension(pi) {
       const parsed = parsePonytailCommand(args, configuredDefaultMode);
 
       if (parsed.type === "status") {
-        ctx?.ui?.notify?.(`Ponytail: current ${currentMode} • default ${configuredDefaultMode}`, "info");
+        ctx?.ui?.notify?.(
+          `Ponytail: current ${currentMode} • default ${configuredDefaultMode}`,
+          "info",
+        );
         return;
       }
 

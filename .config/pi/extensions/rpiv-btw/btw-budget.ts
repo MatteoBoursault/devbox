@@ -73,7 +73,8 @@ export function capHistory(history: BtwTurn[], budget = BTW_HISTORY_TOKEN_BUDGET
   // Greedily extend backward over older turns while the running sum stays within budget.
   // All turns have positive cost, so the first overflow breaks the maximal suffix.
   for (let i = history.length - 2; i >= 0; i--) {
-    const cost = estimateTokens(history[i].userMessage) + estimateTokens(history[i].assistantMessage);
+    const cost =
+      estimateTokens(history[i].userMessage) + estimateTokens(history[i].assistantMessage);
     if (estimate + cost > budget) break;
     estimate += cost;
     k = i;
@@ -123,7 +124,8 @@ export interface FitBranchResult {
 // Stub/truncation literals (research-grounded). BTW_STUB_TEXT is exported for the
 // stub-content test assertion; BTW_TRUNCATE_MARKER_FMT stays private (test asserts the marker substring).
 export const BTW_STUB_TEXT = "[tool result elided by /btw to fit the context window]";
-const BTW_TRUNCATE_MARKER_FMT = (truncatedChars: number): string => `[... ${truncatedChars} characters truncated]`;
+const BTW_TRUNCATE_MARKER_FMT = (truncatedChars: number): string =>
+  `[... ${truncatedChars} characters truncated]`;
 
 // Turn-start discriminator (message-level, NOT the host's entry-level isTurnStartEntry
 // which excludes compaction). branchSummary/compactionSummary are included so a head
@@ -212,7 +214,10 @@ function forwardScanToTurnStart(entries: SessionEntry[], fromIndex: number): num
  *  turn-start (NOT the host's backward findTurnStartIndex), then unfiltered conversion so
  *  a head compaction/branch summary survives (hybrid filter). Returns {messages:null} when
  *  no valid cut (firstKeptEntryIndex<=0) or no turn-start exists — caller stubs the full cache. */
-function trimBranch(entries: SessionEntry[], keepRecentTokens: number): { messages: Message[] | null } {
+function trimBranch(
+  entries: SessionEntry[],
+  keepRecentTokens: number,
+): { messages: Message[] | null } {
   const cut = findCutPoint(entries, 0, entries.length, keepRecentTokens);
   if (cut.firstKeptEntryIndex <= 0) return { messages: null }; // no valid cut → stub the cache
   const startIdx = forwardScanToTurnStart(entries, cut.firstKeptEntryIndex);
@@ -271,7 +276,8 @@ function truncateToFit(result: Message[], budget: number): boolean {
     for (let i = 0; i < result.length; i++) {
       const content = result[i].content;
       if (typeof content === "string") {
-        if (content.length > target.len) target = { mi: i, ci: -1, len: content.length, isString: true };
+        if (content.length > target.len)
+          target = { mi: i, ci: -1, len: content.length, isString: true };
         continue;
       }
       if (Array.isArray(content)) {
@@ -355,7 +361,8 @@ export function fitBranch(input: FitBranchInput): FitBranchResult {
     branchKeepBudget = input.keepBudget;
   } else {
     const available = model.contextWindow - model.maxTokens - BTW_CONTEXT_RESERVE;
-    const windowBudget = available - estimateTextTokens(systemPrompt) - estimateTokens(question) - admittedEstimate;
+    const windowBudget =
+      available - estimateTextTokens(systemPrompt) - estimateTokens(question) - admittedEstimate;
     if (!isBudgetable(model)) {
       // Skip guard: window unusable → fast-path the cached messages, no trim.
       // keepBudget is still populated (the window-derived value, possibly negative on an
@@ -376,7 +383,12 @@ export function fitBranch(input: FitBranchInput): FitBranchResult {
   if (trim.messages) {
     // Trimmed suffix fits → done (trimmed only).
     if (estimateMessagesTokens(trim.messages) <= branchKeepBudget) {
-      return { messages: trim.messages, branchWasTrimmed: true, stubbed: false, keepBudget: branchKeepBudget };
+      return {
+        messages: trim.messages,
+        branchWasTrimmed: true,
+        stubbed: false,
+        keepBudget: branchKeepBudget,
+      };
     }
     // Still over after trimming → stub the TRIMMED suffix (branchWasTrimmed stays true).
     const stubbed = stubToFit(trim.messages, branchKeepBudget);

@@ -34,6 +34,7 @@
 .config/pi/pi-hermes-memory/sessions.db*
 .config/pi/pi-hermes-memory/.skills-migrated-to-extension-storage
 .config/pi/pi-hermes-memory/.*.recovery-*
+.config/pi/pi-hermes-memory/.*.retired-*
 .config/pi/pi-hermes-memory/.consolidation-locks/
 .config/pi/pi-hermes-memory/skills/
 .config/pi/.pi-hermes-locks.sqlite*

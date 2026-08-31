@@ -1,10 +1,7 @@
 -- Source de vérité unique : langages + formatters.
 -- Consommé par :
---   - nvim (init.lua, via dofile) pour conform / nvim-lint / LSP / treesitter
---   - scripts/format.lua pour formater fichiers récursivement ou stagés
---
--- Ce fichier doit rester du Lua pur (aucun `vim.*`) : il est chargé par luajit standalone.
--- Les chemins de config sont résolus en absolu à partir de l'emplacement de ce fichier.
+--   - nvim (init.lua)
+--   - scripts/format.lua
 
 local function file_dir(src)
   if src:sub(1, 1) == "@" then
@@ -13,16 +10,27 @@ local function file_dir(src)
   return src:match("^(.*[/\\])") or "./"
 end
 
+local LUA_GLOBALS = { "vim", "ya", "cx", "Tab", "Header", "Status", "ui", "_" }
 local DIR = file_dir(debug.getinfo(1, "S").source)
-
 local M = {}
+
+local luacheck_config = { "--globals" }
+for _, g in ipairs(LUA_GLOBALS) do
+  luacheck_config[#luacheck_config + 1] = g
+end
+luacheck_config[#luacheck_config + 1] = "--no-max-line-length"
+
+M.linters = {
+  luacheck = { config = luacheck_config },
+  markdownlint = { config = { "--config", DIR .. ".markdownlint.json" } },
+}
 
 -- key = nom du built-in conform (utilisé par nvim) ; aussi la clé référencée par languages[*].formatter
 -- cmd   : exécutable (script)
 -- args  : sous-commande / flags fixes (script)
 -- config: flags pointant vers la config déplacée (prepend_args pour conform, et script)
--- write : flags d'écriture en place (script uniquement)
--- exts  : extensions de fichiers (script uniquement)
+-- write : flags d'écriture en place (script)
+-- exts  : extensions de fichiers (script)
 M.formatters = {
   stylua = {
     cmd = "stylua",
@@ -75,27 +83,32 @@ M.formatters = {
   },
 }
 
--- filetypes (nvim) / treesitter / linter (nvim-lint) / formatter (clé de M.formatters) / lsp
---   lsp = { name = <nom>, config = <réglages nvim-lsp, optionnel> }
-local lua_ls_settings = {
-  settings = {
-    Lua = {
-      runtime = { version = "LuaJIT" },
-      diagnostics = { globals = { "vim" } },
-      telemetry = { enable = false },
-    },
-  },
-}
-
 M.languages = {
   lua = {
     filetypes = { "lua" },
     treesitter = "lua",
     linter = "luacheck",
     formatter = "stylua",
-    lsp = { name = "lua_ls", config = lua_ls_settings },
+    lsp = {
+      name = "lua_ls",
+      config = {
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            diagnostics = { globals = LUA_GLOBALS },
+            telemetry = { enable = false },
+          },
+        },
+      },
+    },
   },
-  python = { filetypes = { "python" }, treesitter = "python", linter = "ruff", formatter = "ruff_format", lsp = false },
+  python = {
+    filetypes = { "python" },
+    treesitter = "python",
+    linter = "ruff",
+    formatter = "ruff_format",
+    lsp = false,
+  },
   javascript = {
     filetypes = { "javascript" },
     treesitter = "javascript",
@@ -110,7 +123,13 @@ M.languages = {
     formatter = "biome",
     lsp = { name = "ts_ls" },
   },
-  json = { filetypes = { "json", "jsonc" }, treesitter = "json", linter = "biomejs", formatter = "biome", lsp = false },
+  json = {
+    filetypes = { "json", "jsonc" },
+    treesitter = "json",
+    linter = "biomejs",
+    formatter = "biome",
+    lsp = false,
+  },
   rust = {
     filetypes = { "rust" },
     treesitter = "rust",
@@ -132,9 +151,27 @@ M.languages = {
     formatter = "clang-format",
     lsp = { name = "clangd" },
   },
-  bash = { filetypes = { "sh" }, treesitter = "bash", linter = "shellcheck", formatter = "shfmt", lsp = false },
-  toml = { filetypes = { "toml" }, treesitter = "toml", linter = false, formatter = "taplo", lsp = { name = "taplo" } },
-  yaml = { filetypes = { "yaml" }, treesitter = "yaml", linter = "yamllint", formatter = false, lsp = false },
+  bash = {
+    filetypes = { "sh" },
+    treesitter = "bash",
+    linter = "shellcheck",
+    formatter = "shfmt",
+    lsp = false,
+  },
+  toml = {
+    filetypes = { "toml" },
+    treesitter = "toml",
+    linter = false,
+    formatter = "taplo",
+    lsp = { name = "taplo" },
+  },
+  yaml = {
+    filetypes = { "yaml" },
+    treesitter = "yaml",
+    linter = "yamllint",
+    formatter = false,
+    lsp = false,
+  },
   markdown = {
     filetypes = { "markdown" },
     treesitter = "markdown",

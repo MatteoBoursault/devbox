@@ -2,14 +2,48 @@
 -- Helpers
 -- ============================================================
 local Map = vim.keymap.set
+
 local function Nmap(lhs, rhs, desc, opts)
-  Map("n", lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
+  Map(
+    "n",
+    lhs,
+    rhs,
+    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  )
 end
+
 local function Vmap(lhs, rhs, desc, opts)
-  Map("v", lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
+  Map(
+    "v",
+    lhs,
+    rhs,
+    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  )
 end
+
 local function Nvmap(lhs, rhs, desc, opts)
-  Map({ "n", "v" }, lhs, rhs, vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {}))
+  Map(
+    { "n", "v" },
+    lhs,
+    rhs,
+    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  )
+end
+
+local function names_by_ft(langs, field)
+  local by_ft = {}
+  for _, lang in pairs(langs) do
+    local names = lang[field]
+    if names then
+      if type(names) ~= "table" then
+        names = { names }
+      end
+      for _, ft in ipairs(lang.filetypes) do
+        by_ft[ft] = names
+      end
+    end
+  end
+  return by_ft
 end
 
 -- ============================================================
@@ -307,16 +341,10 @@ end
 -- ============================================================
 -- SECTION 7 : FORMATAGE (conform)
 -- ============================================================
+
 do
-  local formatters_by_ft = {}
+  local formatters_by_ft = names_by_ft(langmod.languages, "formatter")
   local formatters = {}
-  for _, lang in pairs(langmod.languages) do
-    if lang.formatter then
-      for _, ft in ipairs(lang.filetypes) do
-        formatters_by_ft[ft] = { lang.formatter }
-      end
-    end
-  end
   for name, fmt in pairs(langmod.formatters) do
     if fmt.config and #fmt.config > 0 then
       formatters[name] = { prepend_args = fmt.config }
@@ -339,17 +367,18 @@ end
 -- SECTION 8 : LINT (nvim-lint)
 -- ============================================================
 do
-  local linters_by_ft = {}
-  for _, lang in pairs(langmod.languages) do
-    if lang.linter then
-      local linters = type(lang.linter) == "table" and lang.linter or { lang.linter }
-      for _, ft in ipairs(lang.filetypes) do
-        linters_by_ft[ft] = linters
-      end
-    end
-  end
+  local linters_by_ft = names_by_ft(langmod.languages, "linter")
 
   require("lint").linters_by_ft = linters_by_ft
+
+  for name, linter in pairs(langmod.linters) do
+    if linter.config and #linter.config > 0 then
+      local base = require("lint.linters." .. name)
+      local args = vim.list_extend({}, linter.config)
+      vim.list_extend(args, base.args or {})
+      require("lint").linters[name] = vim.tbl_deep_extend("force", base, { args = args })
+    end
+  end
 
   vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost" }, {
     group = vim.api.nvim_create_augroup("lint", { clear = true }),

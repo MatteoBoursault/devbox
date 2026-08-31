@@ -9,8 +9,8 @@
 //   3. 'full'
 
 import fs from "node:fs";
-import path from "node:path";
 import os from "node:os";
+import path from "node:path";
 
 const DEFAULT_MODE = "full";
 const VALID_MODES = ["off", "lite", "full", "ultra", "review"];
@@ -58,7 +58,10 @@ function getConfigDir() {
     return path.join(process.env.XDG_CONFIG_HOME, "ponytail");
   }
   if (process.platform === "win32") {
-    return path.join(process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming"), "ponytail");
+    return path.join(
+      process.env.APPDATA || path.join(os.homedir(), "AppData", "Roaming"),
+      "ponytail",
+    );
   }
   return path.join(os.homedir(), ".config", "ponytail");
 }
@@ -90,7 +93,7 @@ function getDefaultMode() {
     if (config.defaultMode && RUNTIME_MODES.includes(config.defaultMode.toLowerCase())) {
       return config.defaultMode.toLowerCase();
     }
-  } catch (e) {
+  } catch {
     // Config file doesn't exist or is invalid — fall through
   }
 
@@ -151,18 +154,18 @@ function writeDefaultMode(mode) {
 
 export {
   DEFAULT_MODE,
-  VALID_MODES,
-  RUNTIME_MODES,
-  getDefaultMode,
+  getClaudeDir,
   getConfigDir,
   getConfigPath,
-  getClaudeDir,
+  getDefaultMode,
   getHideStatus,
   getQuietStartup,
-  isShellSafe,
-  normalizeMode,
-  normalizeConfigMode,
-  normalizePersistedMode,
   isDeactivationCommand,
+  isShellSafe,
+  normalizeConfigMode,
+  normalizeMode,
+  normalizePersistedMode,
+  RUNTIME_MODES,
+  VALID_MODES,
   writeDefaultMode,
 };

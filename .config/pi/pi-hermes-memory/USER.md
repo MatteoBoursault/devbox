@@ -25,3 +25,7 @@ Coding preferences: 2-space indent, 120-char line width. Values minimal code —
 Matteo a demandé que la fonction fish `sch` ouvre un onglet herdr quand on édite un fichier, comme le fait actuellement yazi via open-in-herdr.sh. (Cette préférence spécifique doit être implémentée — il n'a pas encore précisé comment gérer le cas où herdr n'est pas disponible.) <!-- created=2026-08-30, last=2026-08-30 -->
 §
 Matteo a demandé que la fonction fish `sch` ouvre un onglet herdr quand on édite un fichier, comme le fait actuellement yazi via open-in-herdr.sh. Cette préférence est désormais implémentée : il n'a pas précisé comment gérer le cas où herdr n'est pas disponible. <!-- created=2026-08-30, last=2026-08-30 -->
+§
+Matteo préfère que biome.json reste dans .config/language/ (co-localisé avec les autres configs de formatage) plutôt qu'à la racine du dépôt, même si cela demande des ajustements dans nvim-lint. Il valorise la co-localisation des configs. <!-- created=2026-08-30, last=2026-08-30 -->
+§
+Matteo wants linter configs (luacheck globals, markdownlint rules) defined inside languages.lua, co-located with the language/formatter configs, rather than in separate root-level config files - to avoid redundancy and keep a single source of truth. <!-- created=2026-08-30, last=2026-08-30 -->

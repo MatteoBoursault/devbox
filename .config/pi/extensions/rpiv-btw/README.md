@@ -27,7 +27,7 @@ Restart your Pi session.
 
 Type `/btw` followed by your question:
 
-```
+```text
 /btw why did we switch from sockets to SSE last week?
 ```
 

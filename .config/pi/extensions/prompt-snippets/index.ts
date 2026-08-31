@@ -15,7 +15,7 @@
  * - Toggles reset to all-off after each send and at session start.
  */
 
-import { existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
@@ -138,7 +138,9 @@ export default function (pi: ExtensionAPI) {
 
       const itemRow = (snippet: Snippet, idx: number, width: number): string => {
         const pointer = idx === cursor ? theme.fg("accent", "> ") : "  ";
-        const checkbox = working.has(snippet.id) ? theme.fg("success", "[x]") : theme.fg("dim", "[ ]");
+        const checkbox = working.has(snippet.id)
+          ? theme.fg("success", "[x]")
+          : theme.fg("dim", "[ ]");
         const desc = snippet.description ? theme.fg("dim", ` — ${snippet.description}`) : "";
         return truncateToWidth(`${pointer}${checkbox} ${theme.bold(snippet.name)}${desc}`, width);
       };
@@ -146,13 +148,24 @@ export default function (pi: ExtensionAPI) {
       /** List rows with the item index each row corresponds to (null for headers/blanks). */
       const buildListRows = (width: number): { text: string; itemIndex: number | null }[] => {
         const rows: { text: string; itemIndex: number | null }[] = [];
-        rows.push({ text: theme.fg("dim", "↑ PREPEND — added before your message"), itemIndex: null });
-        prepends.forEach((s, i) => rows.push({ text: itemRow(s, i, width), itemIndex: i }));
+        rows.push({
+          text: theme.fg("dim", "↑ PREPEND — added before your message"),
+          itemIndex: null,
+        });
+        prepends.forEach((s, i) => {
+          rows.push({ text: itemRow(s, i, width), itemIndex: i });
+        });
         rows.push({ text: "", itemIndex: null });
-        rows.push({ text: theme.fg("dim", "↓ APPEND — added after your message"), itemIndex: null });
-        appends.forEach((s, i) =>
-          rows.push({ text: itemRow(s, prepends.length + i, width), itemIndex: prepends.length + i }),
-        );
+        rows.push({
+          text: theme.fg("dim", "↓ APPEND — added after your message"),
+          itemIndex: null,
+        });
+        appends.forEach((s, i) => {
+          rows.push({
+            text: itemRow(s, prepends.length + i, width),
+            itemIndex: prepends.length + i,
+          });
+        });
         return rows;
       };
 
@@ -160,7 +173,10 @@ export default function (pi: ExtensionAPI) {
         const rows: string[] = [];
         rows.push(truncateToWidth(theme.bold(snippet.name), width));
         rows.push(
-          truncateToWidth(theme.fg("dim", `${snippet.placement} · order ${snippet.order} · ${snippet.id}`), width),
+          truncateToWidth(
+            theme.fg("dim", `${snippet.placement} · order ${snippet.order} · ${snippet.id}`),
+            width,
+          ),
         );
         rows.push(theme.fg("dim", "─".repeat(Math.min(width, 40))));
         for (const line of snippet.body.split("\n")) {

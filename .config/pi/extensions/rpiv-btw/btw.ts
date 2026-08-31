@@ -20,7 +20,11 @@ import {
 import { type CappedHistory, capHistory, type FitBranchResult, fitBranch } from "./btw-budget.js";
 import { assistantMessageText, type BtwTurn, userMessageText } from "./btw-messages.js";
 import { showBtwOverlay } from "./btw-ui.js";
-import { getRuntimeCompleteSimple, loadCompleteSimple, loadIsContextOverflow } from "./pi-compat.js";
+import {
+  getRuntimeCompleteSimple,
+  loadCompleteSimple,
+  loadIsContextOverflow,
+} from "./pi-compat.js";
 
 // ---------------------------------------------------------------------------
 // Constants — flat named consts, grouped by concern (advisor pattern, b9428e9)
@@ -45,7 +49,8 @@ const MSG_NO_MODEL = "/btw requires an active model";
 const ERR_EMPTY_RESPONSE = "/btw returned no text content.";
 
 // Errors (parameterized)
-const errMisconfigured = (label: string, err: string) => `/btw model (${label}) is misconfigured: ${err}`;
+const errMisconfigured = (label: string, err: string) =>
+  `/btw model (${label}) is misconfigured: ${err}`;
 const errNoApiKey = (label: string) => `/btw model (${label}) has no API key available.`;
 const errCallFailed = (err: string | undefined) => `/btw call failed: ${err ?? "unknown error"}`;
 const errCallThrew = (msg: string) => `/btw call threw: ${msg}`;
@@ -53,7 +58,11 @@ const errCallThrew = (msg: string) => `/btw call threw: ${msg}`;
 // Budget (context-budgeting) constants — defined in btw-budget.ts (the leaf budget
 // module; keeps the module cycle type-only at runtime), re-exported here so the
 // package surface is unchanged.
-export { BTW_CONTEXT_RESERVE, BTW_HISTORY_TOKEN_BUDGET, BTW_NO_ANCHOR_SAFETY_FACTOR } from "./btw-budget.js";
+export {
+  BTW_CONTEXT_RESERVE,
+  BTW_HISTORY_TOKEN_BUDGET,
+  BTW_NO_ANCHOR_SAFETY_FACTOR,
+} from "./btw-budget.js";
 // BtwTurn + the message-text extractors live in the cycle-break leaf
 // (packages/rpiv-btw/btw-messages.ts); re-exported here so the package surface is
 // unchanged (packages/rpiv-btw/btw.test.ts / btw-ui.test.ts / btw-budget.test.ts still
@@ -129,11 +138,16 @@ export function clearSessionHistory(ctx: ExtensionContext): void {
   getState().histories.set(getSessionFile(ctx), []);
 }
 
-function getSnapshot(ctx: ExtensionContext): { messages: Message[]; entries: SessionEntry[] } | undefined {
+function getSnapshot(
+  ctx: ExtensionContext,
+): { messages: Message[]; entries: SessionEntry[] } | undefined {
   return getState().snapshots.get(getSessionFile(ctx));
 }
 
-function setSnapshot(ctx: ExtensionContext, snapshot: { messages: Message[]; entries: SessionEntry[] }): void {
+function setSnapshot(
+  ctx: ExtensionContext,
+  snapshot: { messages: Message[]; entries: SessionEntry[] },
+): void {
   getState().snapshots.set(getSessionFile(ctx), snapshot);
 }
 
@@ -172,7 +186,10 @@ export type BtwExecResult =
   | { kind: "error"; error: string; stopReason?: StopReason }
   | { kind: "aborted"; stopReason: StopReason };
 
-function readBranchSnapshot(ctx: ExtensionContext): { messages: Message[]; entries: SessionEntry[] } {
+function readBranchSnapshot(ctx: ExtensionContext): {
+  messages: Message[];
+  entries: SessionEntry[];
+} {
   const cached = getSnapshot(ctx);
   if (cached) return cached;
   // Cold start (no message_end fired yet) — fall back to a single live read.
@@ -195,7 +212,10 @@ export function buildBtwMessages(
   keepBudget?: number,
 ): BtwBuiltContext {
   // ctx.model is non-null here — executeBtw returns early on !model before calling.
-  const model = ctx.model!;
+  const model = ctx.model;
+  if (!model) {
+    throw new Error("btw: buildBtwMessages requires ctx.model");
+  }
   const history = getSessionHistory(ctx);
   const { messages, entries } = readBranchSnapshot(ctx);
   const systemPrompt = buildSystemPrompt();
@@ -293,7 +313,10 @@ export async function executeBtw(
     let retried = false;
     const callCompleteSimple = async (
       built: BtwBuiltContext,
-    ): Promise<{ kind: "aborted"; stopReason: StopReason } | { kind: "completed"; response: AssistantMessage }> => {
+    ): Promise<
+      | { kind: "aborted"; stopReason: StopReason }
+      | { kind: "completed"; response: AssistantMessage }
+    > => {
       const response = await completeSimple(
         model,
         { systemPrompt: built.systemPrompt, messages: built.messages, tools: [] },
@@ -396,7 +419,11 @@ export function registerBtwCommand(pi: ExtensionAPI): void {
   });
 }
 
-async function handleBtwCommand(_pi: ExtensionAPI, args: string, ctx: ExtensionCommandContext): Promise<void> {
+async function handleBtwCommand(
+  _pi: ExtensionAPI,
+  args: string,
+  ctx: ExtensionCommandContext,
+): Promise<void> {
   if (!ctx.hasUI) {
     ctx.ui.notify(MSG_REQUIRES_INTERACTIVE, "error");
     return;
