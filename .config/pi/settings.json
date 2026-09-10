@@ -1,14 +1,13 @@
 {
   "defaultProvider": "deepseek",
-  "defaultModel": "deepseek-v4-flash",
+  "defaultModel": "deepseek-v4-pro",
   "npmCommand": ["bun"],
   "packages": [
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
-    "npm:pi-subagents",
     "npm:pi-hermes-memory",
     "npm:@juicesharp/rpiv-ask-user-question"
   ],
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "0.85.1",
   "theme": "dark"
 }
