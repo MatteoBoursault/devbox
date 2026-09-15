@@ -1,71 +1,84 @@
-// Extension de sous-agents : délègue une tâche à un processus pi séparé lancé
-// dans un onglet herdr. Source de vérité : ~/subagent.md (tant que l'extension
-// n'est pas figée).
+// Délègue une tâche à un processus pi séparé dans un onglet herdr.
+// watch-subagent.sh (détaché) détecte la fin, ferme l'onglet et réveille l'orchestrateur.
+import { spawn } from "node:child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
-import { join } from "node:path";
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+import { getAgentDir, parseFrontmatter, type ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
 const HOME = process.env.HOME ?? homedir();
-const AGENT_DIR = process.env.PI_CODING_AGENT_DIR
-  ? join(process.env.PI_CODING_AGENT_DIR, "agents")
-  : join(HOME, ".config", "pi", "agents");
+const AGENT_DIR = join(getAgentDir(), "agents");
 const RUNS_ROOT = join(HOME, ".cache", "pi", "subagents", "runs");
 const LAUNCH_SCRIPT = join(HOME, "scripts", "launch-in-herdr.sh");
+const WATCH_SCRIPT = join(HOME, "scripts", "watch-subagent.sh");
+const WRITE_SCOPE_EXT = join(dirname(fileURLToPath(import.meta.url)), "write-scope.ts");
 
 interface AgentDef {
   name: string;
   description: string;
-  file: string;
+  body: string;
   skills: string[];
   tools: string[];
+  extensions: string[];
   model?: string;
 }
 
-/** Extrait le frontmatter YAML (clé: valeur plats) d'un .md. */
-function parseFrontmatter(raw: string): Record<string, string> {
-  const data: Record<string, string> = {};
-  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!m) return data;
-  for (const line of m[1].split(/\r?\n/)) {
-    const idx = line.indexOf(":");
-    if (idx <= 0) continue;
-    let value = line.slice(idx + 1).trim();
-    value = value.replace(/^["']|["']$/g, ""); // guillemets d'entourage
-    value = value.replace(/\s+#.*$/, "").trim(); // commentaire inline
-    data[line.slice(0, idx).trim()] = value;
-  }
-  return data;
+/** Normalise une valeur de frontmatter (string "a,b" ou tableau YAML) en liste. */
+function parseList(value: unknown): string[] {
+  const raw = Array.isArray(value) ? value : typeof value === "string" ? value.split(",") : [];
+  return raw
+    .filter((x): x is string => typeof x === "string")
+    .map((x) => x.trim())
+    .filter(Boolean);
 }
 
-function loadAgents(): AgentDef[] {
-  if (!existsSync(AGENT_DIR)) return [];
-  return readdirSync(AGENT_DIR)
-    .filter((f) => f.endsWith(".md"))
-    .map((f) => {
-      const file = join(AGENT_DIR, f);
-      const fm = parseFrontmatter(readFileSync(file, "utf8"));
-      return {
-        name: fm.name ?? f.replace(/\.md$/, ""),
-        description: fm.description ?? "",
-        file,
-        skills: (fm.skills ?? "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        tools: (fm.tools ?? "")
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        model: fm.model || undefined,
-      };
-    })
-    .filter((a) => a.name && a.description);
+function resolveExtensionPath(name: string): string | undefined {
+  const dir = join(getAgentDir(), "extensions");
+  const candidates = [
+    join(dir, name, "index.ts"),
+    join(dir, name, "index.js"),
+    join(dir, `${name}.ts`),
+    join(dir, `${name}.js`),
+  ];
+  return candidates.find((p) => existsSync(p));
+}
+
+function loadAgents(): { agents: AgentDef[]; errors: string[] } {
+  if (!existsSync(AGENT_DIR)) return { agents: [], errors: [] };
+  const agents: AgentDef[] = [];
+  const errors: string[] = [];
+  for (const f of readdirSync(AGENT_DIR)) {
+    if (!f.endsWith(".md")) continue;
+    const file = join(AGENT_DIR, f);
+    let frontmatter: Record<string, unknown> = {};
+    let body = "";
+    try {
+      const parsed = parseFrontmatter<Record<string, unknown>>(readFileSync(file, "utf8"));
+      frontmatter = parsed.frontmatter;
+      body = parsed.body;
+    } catch (e) {
+      errors.push(`${file}: ${e instanceof Error ? e.message : String(e)}`);
+      continue;
+    }
+    const name = typeof frontmatter.name === "string" ? frontmatter.name : f.replace(/\.md$/, "");
+    const description = typeof frontmatter.description === "string" ? frontmatter.description : "";
+    if (!name || !description) continue;
+    agents.push({
+      name,
+      description,
+      body,
+      skills: parseList(frontmatter.skills),
+      tools: parseList(frontmatter.tools),
+      extensions: parseList(frontmatter.extensions),
+      model: typeof frontmatter.model === "string" ? frontmatter.model : undefined,
+    });
+  }
+  return { agents, errors };
 }
 
 function buildProtocol(agent: AgentDef, runId: string, runDir: string): string {
-  const pane = process.env.HERDR_PANE_ID ?? "";
   return [
     "Tu es un sous-agent lancé par l'outil delegate.",
     `- run_id: ${runId}`,
@@ -73,13 +86,9 @@ function buildProtocol(agent: AgentDef, runId: string, runDir: string): string {
     "",
     "À la fin de ta tâche (succès ou échec) :",
     `1. Dépose tes artefacts dans ${runDir}/artifacts/.`,
-    `2. Écris ${runDir}/result.json au format exact :`,
+    `2. Écris ${runDir}/result.json via l'outil write au format exact :`,
     `   {"run_id":"${runId}","agent":"${agent.name}","status":"success","summary":"…","artifacts":["artifacts/…"],"error":null}`,
     '   (status = "failure" et error renseigné si échec)',
-    "3. Réveille l'orchestrateur :",
-    `   herdr agent prompt ${pane} "Sous-agent ${agent.name} terminé. Lis ${runDir}/result.json et intègre le résultat."`,
-    "4. Ferme ton onglet herdr (ceci termine le sous-agent) :",
-    "   herdr tab close $HERDR_TAB_ID",
   ].join("\n");
 }
 
@@ -87,14 +96,15 @@ export default function (pi: ExtensionAPI) {
   const skillPaths = new Map<string, string>(); // nom de skill → chemin
   let agentList: AgentDef[] = [];
 
-  pi.on("before_agent_start", (event) => {
-    // Carte nom→chemin des skills chargés (pour résoudre les skills des agents).
+  pi.on("before_agent_start", (event, ctx) => {
     skillPaths.clear();
     for (const s of event.systemPromptOptions.skills ?? []) {
       skillPaths.set(s.name, s.filePath);
     }
 
-    agentList = loadAgents();
+    const { agents, errors } = loadAgents();
+    for (const err of errors) ctx.ui.notify(`Agent YAML invalide, ignoré : ${err}`, "error");
+    agentList = agents;
     if (agentList.length === 0) return;
 
     const section = [
@@ -128,12 +138,15 @@ export default function (pi: ExtensionAPI) {
       if (process.env.HERDR_ENV !== "1") {
         throw new Error("delegate nécessite une session herdr (HERDR_ENV=1).");
       }
+      const orchestratorPane = process.env.HERDR_PANE_ID;
+      if (!orchestratorPane) {
+        throw new Error("HERDR_PANE_ID introuvable : impossible de réveiller l'orchestrateur.");
+      }
 
-      const agent = (agentList.length ? agentList : loadAgents()).find((a) => a.name === agentName);
+      const agents = agentList.length ? agentList : loadAgents().agents;
+      const agent = agents.find((a) => a.name === agentName);
       if (!agent) {
-        const available = (agentList.length ? agentList : loadAgents())
-          .map((a) => a.name)
-          .join(", ");
+        const available = agents.map((a) => a.name).join(", ");
         throw new Error(`Agent inconnu : « ${agentName} ». Disponibles : ${available || "aucun"}.`);
       }
 
@@ -144,37 +157,64 @@ export default function (pi: ExtensionAPI) {
         skillArgs.push("--skill", p);
       }
 
+      const extArgs: string[] = [];
+      for (const ename of agent.extensions) {
+        const p = resolveExtensionPath(ename);
+        if (!p)
+          throw new Error(`Extension « ${ename} » introuvable pour l'agent « ${agentName} ».`);
+        extArgs.push("--extension", p);
+      }
+
       const runId = `${agentName}-${Date.now()}`;
       const runDir = join(RUNS_ROOT, runId);
       mkdirSync(join(runDir, "artifacts"), { recursive: true });
       writeFileSync(join(runDir, "task.md"), task);
       writeFileSync(join(runDir, "protocol.md"), buildProtocol(agent, runId, runDir));
+      const agentPromptPath = join(runDir, "agent-prompt.md");
+      writeFileSync(agentPromptPath, agent.body);
 
       const args = [
         "pi",
         `@${join(runDir, "task.md")}`,
         "--append-system-prompt",
-        `@${agent.file}`,
+        agentPromptPath,
         "--append-system-prompt",
-        `@${join(runDir, "protocol.md")}`,
+        join(runDir, "protocol.md"),
         "--no-skills",
         ...skillArgs,
       ];
-      if (agent.tools.length) {
-        const tools = agent.tools.includes("bash") ? agent.tools : [...agent.tools, "bash"];
-        args.push("--tools", tools.join(","));
-      }
+      if (agent.tools.length) args.push("--tools", agent.tools.join(","));
+      args.push("--no-extensions", "--extension", WRITE_SCOPE_EXT, ...extArgs);
       const model =
         agent.model ?? (ctx.model ? `${ctx.model.provider}/${ctx.model.id}` : undefined);
       if (model) args.push("--model", model);
       args.push("--no-session", "--approve");
 
-      const res = await pi.exec(LAUNCH_SCRIPT, [`agent:${agentName}`, args.join(" ")], {
-        cwd: ctx.cwd,
-      });
+      const cmd = ["env", `SUBAGENT_RUN_DIR=${runDir}`, ...args].join(" ");
+      const res = await pi.exec(LAUNCH_SCRIPT, [`agent:${agentName}`, cmd], { cwd: ctx.cwd });
       if (res.code !== 0) {
         throw new Error(`Échec du lancement herdr : ${res.stderr || res.stdout}`);
       }
+
+      let paneId: string | undefined;
+      let tabId: string | undefined;
+      try {
+        const out = JSON.parse(res.stdout);
+        paneId = out.result?.root_pane?.pane_id;
+        tabId = out.result?.tab?.tab_id;
+      } catch {}
+      if (!paneId || !tabId) {
+        throw new Error(
+          `IDs herdr introuvables dans la sortie de lancement : ${res.stdout || res.stderr}`,
+        );
+      }
+
+      const watcher = spawn(
+        WATCH_SCRIPT,
+        [runId, agentName, runDir, paneId, tabId, orchestratorPane],
+        { detached: true, stdio: "ignore" },
+      );
+      watcher.unref();
 
       return {
         content: [
