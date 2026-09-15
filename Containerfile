@@ -18,7 +18,7 @@ RUN pacman -Syu --noconfirm --needed \
   bandwhich btop difftastic procs trash-cli \
   # lsp/linter/formatter
   uv ruff mypy \
-  clang cppcheck \
+  tree-sitter-cli clang cppcheck \
   stylua luacheck lua-language-server \
   shellcheck shfmt \
   biome taplo-cli yamllint markdownlint-cli
@@ -26,7 +26,7 @@ RUN pacman -Syu --noconfirm --needed \
 RUN curl -fsSL https://herdr.dev/install.sh | sh
 
 RUN bun add -g --ignore-scripts \
-  tree-sitter-cli typescript typescript-language-server \
+  typescript typescript-language-server \
   node-gyp @earendil-works/pi-coding-agent
 
 RUN rustup default stable && \
