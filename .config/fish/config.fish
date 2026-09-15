@@ -8,6 +8,14 @@ starship init fish | source
 zoxide init fish --cmd cd | source
 
 # ENV
+if test -f ~/.secrets/.env
+    for line in (cat ~/.secrets/.env)
+        set kv (string split -m 1 '=' -- $line)
+        if test (count $kv) -eq 2
+            set -gx $kv[1] $kv[2]
+        end
+    end
+end
 fish_add_path ~/.local/bin
 set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
 set -gx PI_CODING_AGENT_DIR ~/.config/pi
