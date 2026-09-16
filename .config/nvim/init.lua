@@ -292,23 +292,21 @@ do
   vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
     callback = function(event)
-      local map = function(keys, func, desc, mode)
-        vim.keymap.set(mode or "n", keys, func, { buffer = event.buf, desc = "LSP: " .. desc })
-      end
+      local buf = { buffer = event.buf }
 
-      map("K", vim.lsp.buf.hover, "Hover")
-      map("grn", vim.lsp.buf.rename, "Rename")
-      map("gra", vim.lsp.buf.code_action, "Code action", { "n", "x" })
-      map("grD", vim.lsp.buf.declaration, "Declaration")
-      map("grr", fzf.lsp_references, "References")
-      map("gri", fzf.lsp_implementations, "Implementations")
-      map("grd", fzf.lsp_definitions, "Definitions")
-      map("grt", fzf.lsp_typedefs, "Type definition")
-      map("gO", fzf.lsp_document_symbols, "Document symbols")
-      map("gW", fzf.lsp_live_workspace_symbols, "Workspace symbols")
-      map("<leader>th", function()
+      Nmap("K", vim.lsp.buf.hover, "LSP: Hover", buf)
+      Nmap("grn", vim.lsp.buf.rename, "LSP: Rename", buf)
+      Nvmap("gra", vim.lsp.buf.code_action, "LSP: Code action", buf)
+      Nmap("grD", vim.lsp.buf.declaration, "LSP: Declaration", buf)
+      Nmap("grr", fzf.lsp_references, "LSP: References", buf)
+      Nmap("gri", fzf.lsp_implementations, "LSP: Implementations", buf)
+      Nmap("grd", fzf.lsp_definitions, "LSP: Definitions", buf)
+      Nmap("grt", fzf.lsp_typedefs, "LSP: Type definition", buf)
+      Nmap("gO", fzf.lsp_document_symbols, "LSP: Document symbols", buf)
+      Nmap("gW", fzf.lsp_live_workspace_symbols, "LSP: Workspace symbols", buf)
+      Nmap("<leader>th", function()
         vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-      end, "Toggle inlay hints")
+      end, "LSP: Toggle inlay hints", buf)
 
       local client = vim.lsp.get_client_by_id(event.data.client_id)
       if client and client:supports_method("textDocument/documentHighlight", event.buf) then
