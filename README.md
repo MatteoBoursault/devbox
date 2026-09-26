@@ -117,7 +117,7 @@ La devbox gère les langages suivants :
 
 ## Roadmap
 
-Version actuelle : 1.0
+Version actuelle : 2.0
 
 ### Version 1.0
 
