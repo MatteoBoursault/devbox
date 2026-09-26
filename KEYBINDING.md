@@ -14,8 +14,10 @@
 **kitty**
   `ctrl+y/p`                          copy / past
   `ctrl+x`                            scrollback dans nvim
-  `alt+l/p`                           prompt next / prev
   `alt+u/c/h`                         hints url / path / hash
+
+**pi**
+  `alt+p/l`                           scroll ligne haut / bas
 
 **yazi**
   `h` · `t/n` · `s`                   parent · ligne next / prev · entrer

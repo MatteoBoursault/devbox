@@ -1,0 +1,4 @@
+{
+  "tui.altScreen.lineUp": ["alt+p"],
+  "tui.altScreen.lineDown": ["alt+l"]
+}
