@@ -48,7 +48,8 @@ distrobox create --name devbox \
       git checkout main && \
       just setup && \
       touch \$HOME/.devbox-initialized\"; \
-  fi"
+  fi; \
+    runuser -u \$(stat -c %u \$HOME) -- sh -c command -v spydog >/dev/null 2>&1 && nohup spydog >/dev/null 2>&1 &"
 ```
 
 Entrer dans la devbox :
@@ -78,6 +79,10 @@ La devbox contient les outils suivants, configurés pour fonctionner ensemble :
 - nvim (IDE)
 - pi (harnais LLM)
 - bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs, grex, trash-cli... (outils CLI)
+
+## Monitoring
+
+Un daemon **spydog** (Rust) journalise les actions de la devbox : commandes shell, raccourcis nvim/kitty, déplacements yazi, événements herdr. Chaque outil envoie ses événements à la socket du daemon, qui les stocke dans une base SQLite placée dans la home hôte (`~/.local/share/spydog/events.db`).
 
 ## Langages
 

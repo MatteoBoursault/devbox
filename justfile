@@ -22,4 +22,5 @@ setup: update
     bat cache --build
     rtk init -g --agent pi
     git config core.hooksPath githooks
+    herdr plugin link ~/.config/herdr/plugins/spydog
     @echo "✓ Initialisation terminée"

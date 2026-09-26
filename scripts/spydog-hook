@@ -1,0 +1,9 @@
+#!/bin/sh
+# Point d'entrée des hooks spydog : appelle spydog-log s'il est installé,
+# sinon ne fait rien (hooks inactifs sans le binaire).
+# herdr : payload fourni via HERDR_PLUGIN_EVENT_JSON (pas en argument) → injecté.
+command -v spydog-log >/dev/null 2>&1 || exit 0
+if [ "$#" -eq 2 ] && [ -n "${HERDR_PLUGIN_EVENT_JSON:-}" ]; then
+  set -- "$1" "$2" "$HERDR_PLUGIN_EVENT_JSON"
+fi
+exec spydog-log "$@"

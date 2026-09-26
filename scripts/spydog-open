@@ -1,0 +1,8 @@
+#!/bin/sh
+# spydog-open <source> <path> : logge l'ouverture d'un fichier (type "open")
+# puis l'ouvre dans l'éditeur via herdr.
+source_="$1"
+path="$2"
+escaped=$(printf '%s' "$path" | sed 's/\\/\\\\/g; s/"/\\"/g')
+spydog-hook "$source_" open "{\"url\":\"$escaped\"}"
+exec sh "$HOME/scripts/launch-in-herdr.sh" nvim "$EDITOR" "$path"

@@ -17,6 +17,7 @@ if test -f ~/.secrets/.env
     end
 end
 fish_add_path ~/.local/bin
+fish_add_path ~/scripts
 set -gx STARSHIP_CONFIG ~/.config/starship/starship.toml
 set -gx PI_CODING_AGENT_DIR ~/.config/pi
 set -gx PI_HERMES_CONSOLIDATION_LOCK_DIR ~/.cache/pi/locks

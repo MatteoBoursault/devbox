@@ -2,32 +2,22 @@
 -- Helpers
 -- ============================================================
 local Map = vim.keymap.set
+local spydog = require("spydog")
+spydog.setup()
 
 local function Nmap(lhs, rhs, desc, opts)
-  Map(
-    "n",
-    lhs,
-    rhs,
-    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
-  )
+  local o = vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  Map("n", lhs, spydog.wrap("n", lhs, desc, rhs), o)
 end
 
 local function Vmap(lhs, rhs, desc, opts)
-  Map(
-    "v",
-    lhs,
-    rhs,
-    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
-  )
+  local o = vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  Map("v", lhs, spydog.wrap("v", lhs, desc, rhs), o)
 end
 
 local function Nvmap(lhs, rhs, desc, opts)
-  Map(
-    { "n", "v" },
-    lhs,
-    rhs,
-    vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
-  )
+  local o = vim.tbl_extend("force", { desc = desc, silent = true, noremap = true }, opts or {})
+  Map({ "n", "v" }, lhs, spydog.wrap("nv", lhs, desc, rhs), o)
 end
 
 local function names_by_ft(langs, field)

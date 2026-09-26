@@ -10,7 +10,14 @@ local function file_dir(src)
   return src:match("^(.*[/\\])") or "./"
 end
 
-local LUA_GLOBALS = { "vim", "ya", "cx", "Tab", "Header", "Status", "ui", "_" }
+local LUA_GLOBALS = {
+  -- nvim
+  "vim",
+  -- yazi
+  "ya", "cx", "Tab", "Header", "Status", "ui", "Command", "ps",
+  -- lua (commun)
+  "_",
+}
 local DIR = file_dir(debug.getinfo(1, "S").source)
 local M = {}
 

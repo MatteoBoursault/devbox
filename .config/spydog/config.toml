@@ -1,0 +1,3 @@
+# spydog — configuration du daemon (devbox)
+# La base est stockée dans la home principale (hôte), hors de la devbox-home.
+db_path = "$DISTROBOX_HOST_HOME/.local/share/spydog/events.db"

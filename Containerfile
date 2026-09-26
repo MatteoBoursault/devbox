@@ -55,4 +55,7 @@ RUN paru -S --noconfirm grex rtk-bin
 
 USER root
 RUN chmod -R a+rwX $RUSTUP_HOME $CARGO_HOME $HERDR_INSTALL_DIR $BUN_INSTALL
+
+# spydog (optionnel)
+RUN cargo install --git https://github.com/MatteoBoursault/spydog.git || true
 RUN pacman -Scc --noconfirm

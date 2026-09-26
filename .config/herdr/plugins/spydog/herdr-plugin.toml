@@ -1,0 +1,42 @@
+id = "devbox.spydog"
+name = "Spydog"
+version = "0.1.0"
+min_herdr_version = "0.9.0"
+description = "Log herdr events to spydog"
+platforms = ["linux"]
+
+[[events]]
+on = "pane.focused"
+command = ["spydog-hook", "herdr", "pane.focused"]
+
+[[events]]
+on = "pane.created"
+command = ["spydog-hook", "herdr", "pane.created"]
+
+[[events]]
+on = "pane.closed"
+command = ["spydog-hook", "herdr", "pane.closed"]
+
+[[events]]
+on = "tab.focused"
+command = ["spydog-hook", "herdr", "tab.focused"]
+
+[[events]]
+on = "tab.created"
+command = ["spydog-hook", "herdr", "tab.created"]
+
+[[events]]
+on = "tab.closed"
+command = ["spydog-hook", "herdr", "tab.closed"]
+
+[[events]]
+on = "workspace.focused"
+command = ["spydog-hook", "herdr", "workspace.focused"]
+
+[[events]]
+on = "workspace.created"
+command = ["spydog-hook", "herdr", "workspace.created"]
+
+[[events]]
+on = "workspace.closed"
+command = ["spydog-hook", "herdr", "workspace.closed"]
