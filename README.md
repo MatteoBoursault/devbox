@@ -49,7 +49,8 @@ distrobox create --name devbox \
       just setup && \
       touch \$HOME/.devbox-initialized\"; \
   fi; \
-    runuser -u \$(stat -c %u \$HOME) -- sh -c command -v spydog >/dev/null 2>&1 && nohup spydog >/dev/null 2>&1 &"
+  runuser -u \$(stat -c %u \$HOME) -- sh -c \"command -v spydog >/dev/null 2>&1 && \
+    nohup spydog >/dev/null 2>&1 &\""
 ```
 
 Entrer dans la devbox :

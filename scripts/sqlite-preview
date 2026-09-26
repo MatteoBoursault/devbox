@@ -1,0 +1,14 @@
+#!/bin/sh
+# Aperçu d'une base SQLite : schéma complet + premières lignes de chaque table.
+db=$1
+
+sqlite3 -readonly "$db" ".schema"
+echo
+
+sqlite3 -readonly "$db" "SELECT name FROM sqlite_master WHERE type IN ('table','view') ORDER BY name;" |
+while IFS= read -r t; do
+  [ -n "$t" ] || continue
+  echo "== $t =="
+  sqlite3 -readonly -header -column "$db" "SELECT * FROM \"$t\" LIMIT 20;"
+  echo
+done

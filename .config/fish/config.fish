@@ -35,6 +35,7 @@ abbr -a netw 'bandwhich'
 abbr -a regex 'grex'
 abbr -a rm 'trash'
 abbr -a gap 'git commit --amend --no-edit && git push --force-with-lease'
+abbr -a gt 'git status'
 
 # HISTORY
 source ~/.config/fish/functions/skim_key_bindings.fish
