@@ -387,6 +387,21 @@ do
     end
   end
 
+  -- d2 n'est pas dans nvim-treesitter : parser externe + filetype, enregistrés pour l'install.
+  vim.filetype.add({ extension = { d2 = "d2" } })
+  vim.api.nvim_create_autocmd("User", {
+    pattern = "TSUpdate",
+    callback = function()
+      require("nvim-treesitter.parsers").d2 = {
+        install_info = {
+          url = "https://github.com/ravsii/tree-sitter-d2",
+          revision = "200434618a6bede20ebd4982aa4d4f1edeb0b5c1",
+          queries = "queries",
+        },
+      }
+    end,
+  })
+
   require("nvim-treesitter").install(parsers)
 
   vim.api.nvim_create_autocmd("FileType", {

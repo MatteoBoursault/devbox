@@ -14,7 +14,14 @@ local LUA_GLOBALS = {
   -- nvim
   "vim",
   -- yazi
-  "ya", "cx", "Tab", "Header", "Status", "ui", "Command", "ps",
+  "ya",
+  "cx",
+  "Tab",
+  "Header",
+  "Status",
+  "ui",
+  "Command",
+  "ps",
   -- lua (commun)
   "_",
 }
@@ -87,6 +94,13 @@ M.formatters = {
     config = { "--config", DIR .. ".taplo.toml" },
     write = {},
     exts = { "toml" },
+  },
+  d2 = {
+    cmd = "d2",
+    args = { "fmt" },
+    config = {},
+    write = {},
+    exts = { "d2" },
   },
 }
 
@@ -184,6 +198,13 @@ M.languages = {
     treesitter = "markdown",
     linter = "markdownlint",
     formatter = false,
+    lsp = false,
+  },
+  d2 = {
+    filetypes = { "d2" },
+    treesitter = "d2",
+    linter = false,
+    formatter = "d2",
     lsp = false,
   },
 }

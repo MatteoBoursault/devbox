@@ -16,6 +16,7 @@ RUN pacman -Syu --noconfirm --needed \
   fish starship kitty yazi neovim \
   bat eza zoxide skim ripgrep fd \
   bandwhich btop difftastic procs trash-cli \
+  d2 \
   # lsp/linter/formatter
   uv ruff mypy \
   tree-sitter-cli clang cppcheck \

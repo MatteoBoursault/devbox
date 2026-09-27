@@ -79,6 +79,7 @@ La devbox contient les outils suivants, configurés pour fonctionner ensemble :
 - yazi (gestionnaire de fichiers)
 - nvim (IDE)
 - pi (harnais LLM)
+- d2 (diagrammes en code)
 - bat, eza, zoxide, skim, rg, fd, bandwhich, btop, difftastic, procs, grex, trash-cli... (outils CLI)
 
 ## Monitoring
@@ -100,6 +101,7 @@ La devbox gère les langages suivants :
 - Toml
 - Yaml
 - Markdown
+- D2
 
 ### Formatter / Linter / LSP
 
@@ -115,6 +117,7 @@ La devbox gère les langages suivants :
 | TOML | taplo | taplo | taplo |
 | YAML | — | yamllint | — |
 | Markdown | — | markdownlint-cli | — |
+| D2 | d2 fmt | — | — |
 
 ## Roadmap
 
