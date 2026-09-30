@@ -1,45 +1,58 @@
 ---
 name: d2-diagrams
 description: >
-  Écrire et vérifier des diagrammes avec d2 (DSL texte → PNG / SVG / ASCII). À utiliser
-  dès qu'on demande un diagramme, un schéma, un flux, une architecture, un ERD, un
-  diagramme de classes, une séquence ou une arborescence : écrire un fichier .d2 plutôt
-  que du mermaid ou de l'ASCII dessiné à la main. Contient la syntaxe utile, les pièges
-  et la recette de vérification.
+  Écrire et vérifier des diagrammes avec d2. À utiliser dès qu'on demande un diagramme,
+  un schéma, un flux, une architecture, un ERD, un diagramme de classes, une séquence ou
+  une arborescence : écrire un fichier .d2 plutôt que du mermaid ou de l'ASCII dessiné à
+  la main. Rendu SVG aux couleurs kanagawa ; contient la syntaxe utile, les pièges et la
+  recette de vérification.
 ---
 
 # Diagrammes avec d2
 
 Un `.d2` se corrige en relisant une ligne, pas en redessinant. Préférer un fichier `.d2`
-à côté du code documenté plutôt qu'un mermaid enfoui dans un commentaire.
+à côté du code documenté plutôt qu'un mermaid enfoui dans un commentaire. Le rendu se fait
+aux couleurs kanagawa (thème préfixé, voir l'étape 2).
 
 ## Vérifier — obligatoire
 
-1. `d2 validate f.d2` — erreurs de syntaxe et de sémantique sur stderr, exit 1. Corriger
-   jusqu'à `Success!`.
-2. `d2 f.d2 f.png` — rendu.
-3. Se relire soi-même, selon ce que le modèle accepte en entrée :
-   - **images acceptées en entrée** : `read` le PNG produit — il est envoyé au modèle, on
-     voit le diagramme tel qu'il sera livré ;
-   - **texte seulement** : `d2 --target '' --stdout-format ascii f.d2 -` et lire la sortie.
-     Les lignes `success:` / `info:` partent sur stderr : stdout ne contient que le dessin.
+1. `d2 validate f.d2` — corriger jusqu'à `Success!` (erreurs sur stderr, exit 1).
+2. Rendre le SVG, couleurs kanagawa :
+
+   ```bash
+   cat ~/.config/d2/kanagawa-theme.d2 f.d2 | d2 - f.svg
+   ```
+
+   Sans ce préfixe, d2 rend avec son thème clair par défaut.
+3. Relire le rendu avant de livrer, selon ce que le modèle accepte :
+   - **images acceptées en entrée** : `rsvg-convert f.svg f.png && read f.png` — `read`
+     n'envoie pas les SVG comme image, il faut rasteriser d'abord ;
+   - **texte seulement** : `d2 --target '' --stdout-format ascii f.d2 -`. Les lignes
+     `success:` / `info:` partent sur stderr ; stdout ne contient que le dessin. Une
+     séquence ne se relit qu'avec `shape: sequence_diagram` (lifelines) : en
+     `direction: right` brut, l'ASCII de ~6 acteurs est illisible.
 
 Ne pas livrer un diagramme qui n'a pas passé l'étape 1.
 
 ## Commandes
 
 ```bash
-d2 f.d2 f.png                # PNG ; sortie .svg par défaut si le chemin est omis
-d2 --theme 5 f.d2 f.png      # thème (liste : d2 themes)
-d2 --layout elk f.d2 f.png   # dagre (défaut) | elk | tala, tous embarqués
+d2 f.d2 f.svg                # rendu SVG (par défaut si le chemin finit en .svg)
+d2 --layout elk f.d2 f.svg   # dagre (défaut) | elk | tala — tous embarqués
+rsvg-convert f.svg f.png     # rasterise le SVG, pour relire le rendu avec `read`
+d2 --stdout-format ascii f.d2 -   # aperçu texte, sans produire de fichier
 d2 fmt f.d2                  # formate en place
 d2 validate f.d2             # seule preuve de correction
 ```
+
+Pour voir le rendu dans le terminal (utilisateur) : `d2p f.d2`, ou `d2p -w f.d2` pour
+suivre les modifications.
 
 ## Syntaxe
 
 ```d2
 direction: right             # au niveau du board ou d'un conteneur ; haut par défaut
+shape: sequence_diagram      # diagramme de séquence : lifelines, lecture haut→bas propre
 
 client -> api: HTTPS         # label du lien après le second ":"
 api -> db: SQL
@@ -91,3 +104,7 @@ scenarios: { panne: {api -> db: "timeout"} }
   pas un diagramme qui en contient.
 - `d2 validate` ne juge pas le fond : un diagramme valide peut être illisible (trop de
   nœuds, `direction` inadapté). C'est l'étape 3 qui tranche.
+- Accolades `{ }` dans un label d'arête (`a -> b: {x, y}`) sont lues comme un map →
+  guillemeter : `a -> b: "{x, y}"`. Idem sous `shape: sequence_diagram`.
+- Diagramme de séquence : `shape: sequence_diagram` (lifelines), pas `direction: right`
+  seul, sinon nœuds croisés et ASCII illisible.

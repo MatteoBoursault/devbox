@@ -25,6 +25,6 @@ run = 'faster-piper -- sh ~/scripts/sqlite-preview "$1"'
 url = "*.d2"
 run = 'faster-piper -- d2 --target "" --stdout-format ascii "$1" -'
 
-[[plugin.prepend_previewers]]
+[[plugin.append_previewers]]
 url = "*"
 run = 'faster-piper -- bat --color=always --style=plain "$1"'

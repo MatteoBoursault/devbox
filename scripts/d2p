@@ -1,0 +1,50 @@
+#!/bin/sh
+# d2p [-w] fichier.d2 — aperçu d'un .d2 aux couleurs kanagawa, letterboxé au pane.
+#   -w : suit les modifications ; Ctrl-C pour quitter.
+if [ "$1" = -w ]; then
+  watch=1
+  shift
+fi
+src=$1
+theme=$HOME/.config/d2/kanagawa-theme.d2
+base=/tmp/d2p-$$
+svg=$base.svg
+png=$base.png
+
+draw() {
+  cat "$theme" "$src" | d2 - "$svg" || return 1
+
+  # taille du pane en pixels (ex. "770x946"), pour rsvg-convert
+  pane_px=$(kitten icat --print-window-size 2>/dev/null | head -1)
+
+  # centre le diagramme (d2 le cale en haut à gauche par défaut)
+  centered=$base.c.svg
+  sed 's/preserveAspectRatio="[^"]*"/preserveAspectRatio="xMidYMid meet"/' "$svg" > "$centered"
+
+  # fond kanagawa (couleur N7 du thème), pour remplir les marges du letterbox
+  bg=$(sed -n 's/.*N7: "\([^"]*\)".*/\1/p' "$theme")
+
+  width=${pane_px%x*}
+  height=${pane_px#*x}
+  rsvg-convert -w "$width" -h "$height" --background-color "$bg" "$centered" -o "$png"
+  rm -f "$centered"
+
+  if [ "$watch" ]; then
+    # --place épingle l'image au coin (en cellules : cols x lignes)
+    kitten icat --clear --place "$(tput cols)x$(tput lines)@0x0" "$png"
+  else
+    kitten icat --clear "$png"
+  fi
+}
+
+if [ "$watch" ]; then
+  trap 'kitten icat --clear; exit 0' INT TERM HUP
+  last_mtime=
+  while :; do
+    mtime=$(stat -c %Y "$src")
+    [ "$mtime" = "$last_mtime" ] || { draw; last_mtime=$mtime; }
+    sleep 0.3
+  done
+else
+  draw || exit 1
+fi
