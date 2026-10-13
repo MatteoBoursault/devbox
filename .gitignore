@@ -27,6 +27,7 @@
 .config/herdr/plugins.json
 .config/herdr/release-notes.json
 .config/herdr/session.json
+.config/herdr/session-snapshots/*
 
 .config/pi/auth.json
 .config/pi/npm/

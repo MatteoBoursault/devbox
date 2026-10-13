@@ -6,6 +6,7 @@ if [ "$1" = -w ]; then
   shift
 fi
 src=$1
+[ -f "$src" ] || { echo "d2p: '$src' introuvable — usage: d2p [-w] <fichier.d2>" >&2; exit 1; }
 theme=$HOME/.config/d2/kanagawa-theme.d2
 base=/tmp/d2p-$$
 svg=$base.svg
