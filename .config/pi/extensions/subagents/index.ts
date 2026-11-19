@@ -41,6 +41,7 @@ function resolveExtensionPath(name: string): string | undefined {
     join(dir, name, "index.js"),
     join(dir, `${name}.ts`),
     join(dir, `${name}.js`),
+    join(getAgentDir(), "npm", "node_modules", name, "dist"),
   ];
   return candidates.find((p) => existsSync(p));
 }
@@ -143,7 +144,7 @@ export default function (pi: ExtensionAPI) {
         throw new Error("HERDR_PANE_ID introuvable : impossible de réveiller l'orchestrateur.");
       }
 
-      const agents = agentList.length ? agentList : loadAgents().agents;
+      const agents = loadAgents().agents;
       const agent = agents.find((a) => a.name === agentName);
       if (!agent) {
         const available = agents.map((a) => a.name).join(", ");

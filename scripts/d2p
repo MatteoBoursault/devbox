@@ -1,5 +1,5 @@
 #!/bin/sh
-# d2p [-w] fichier.d2 — aperçu d'un .d2 aux couleurs kanagawa, letterboxé au pane.
+# d2p [-w] fichier.d2 — aperçu d'un .d2 aux couleurs kanagawa, letterboxé au pane (sauf séquence : pleine largeur, scrollable).
 #   -w : suit les modifications ; Ctrl-C pour quitter.
 if [ "$1" = -w ]; then
   watch=1
@@ -17,20 +17,27 @@ draw() {
 
   # taille du pane en pixels (ex. "770x946"), pour rsvg-convert
   pane_px=$(kitten icat --print-window-size 2>/dev/null | head -1)
-
-  # centre le diagramme (d2 le cale en haut à gauche par défaut)
-  centered=$base.c.svg
-  sed 's/preserveAspectRatio="[^"]*"/preserveAspectRatio="xMidYMid meet"/' "$svg" > "$centered"
-
-  # fond kanagawa (couleur N7 du thème), pour remplir les marges du letterbox
-  bg=$(sed -n 's/.*N7: "\([^"]*\)".*/\1/p' "$theme")
-
   width=${pane_px%x*}
   height=${pane_px#*x}
-  rsvg-convert -w "$width" -h "$height" --background-color "$bg" "$centered" -o "$png"
-  rm -f "$centered"
 
-  if [ "$watch" ]; then
+  if grep -q 'sequence_diagram' "$src"; then
+    # séquence : pleine largeur, hauteur naturelle → icat (--fit=width) la rend scrollable
+    seq=1
+    rsvg-convert -w "$width" "$svg" -o "$png"
+  else
+    seq=0
+    # centre le diagramme (d2 le cale en haut à gauche par défaut)
+    centered=$base.c.svg
+    sed 's/preserveAspectRatio="[^"]*"/preserveAspectRatio="xMidYMid meet"/' "$svg" > "$centered"
+
+    # fond kanagawa (couleur N7 du thème), pour remplir les marges du letterbox
+    bg=$(sed -n 's/.*N7: "\([^"]*\)".*/\1/p' "$theme")
+
+    rsvg-convert -w "$width" -h "$height" --background-color "$bg" "$centered" -o "$png"
+    rm -f "$centered"
+  fi
+
+  if [ "$watch" ] && [ "$seq" != 1 ]; then
     # --place épingle l'image au coin (en cellules : cols x lignes)
     kitten icat --clear --place "$(tput cols)x$(tput lines)@0x0" "$png"
   else
